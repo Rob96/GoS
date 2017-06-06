@@ -27,8 +27,9 @@ function Rengar:LoadMenu()
   self.Menu.Combo:MenuElement({id = "ComboQ", name = "Use Q", value = true})
   self.Menu.Combo:MenuElement({id = "ComboW", name = "Use W", value = true})
   self.Menu.Combo:MenuElement({id = "ComboE", name = "Use E", value = true})
-  self.Menu.Combo:MenuElement({type = MENU,id = "PTIp", name = "Q = 0,   W = 1,   E = 2"})
-  self.Menu.Combo:MenuElement({id = "Prio", name = "Prioritise", value = 0, min = 0, max = 2})
+  self.Menu.Combo:MenuElement({id = "Prio", name = "Combo Priority", drop = {"Q","W","E"})
+  
+  
   
 
   self.Menu:MenuElement({type = MENU, id = "Clear", name = "Clear Settings"})
@@ -50,15 +51,15 @@ end
 function Rengar:Tick()
 
   if myHero.dead then return end
-  if _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_COMBO] and self.Menu.Combo.Prio:Value()== 0 then
+  if _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_COMBO] and self.Menu.Combo.Prio:Value()== 1 then
     self:ComboQ()
     return end
 
-  if _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_COMBO] and self.Menu.Combo.Prio:Value() == 1 then
+  if _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_COMBO] and self.Menu.Combo.Prio:Value() == 2 then
     self:ComboW()
     return end
 
-  if _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_COMBO] and self.Menu.Combo.Prio:Value() == 2 then
+  if _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_COMBO] and self.Menu.Combo.Prio:Value() == 3 then
     self:ComboE()
     return end
 
