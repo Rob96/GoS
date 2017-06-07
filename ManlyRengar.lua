@@ -27,7 +27,7 @@ function Rengar:LoadMenu()
   self.Menu.Combo:MenuElement({id = "ComboQ", name = "Use Q", value = true})
   self.Menu.Combo:MenuElement({id = "ComboW", name = "Use W", value = true})
   self.Menu.Combo:MenuElement({id = "ComboE", name = "Use E", value = true})
-  self.Menu.Combo:MenuElement({id = "Prio", name = "Combo Priority", drop = {"Q","W","E"})
+  self.Menu.Combo:MenuElement({id = "Prio", name = "Combo Priority", drop = {"Q","W","E"}})
   
   
   
