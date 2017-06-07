@@ -5,6 +5,7 @@ end
 
 local SmiteMenu = MenuElement({type = MENU, id = "SmiteMenu", name = "Auto Smite & Markers", leftIcon = "http://puu.sh/rPsnZ/a05d0f19a8.png"})
 SmiteMenu:MenuElement({id = "Enabled", name = "Toggle Enable Key", key = string.byte("M"), toggle = true})
+SmiteMenu:MenuElement({id = "Denabled", name = "Draw if enabled", value = true})
 SmiteMenu:MenuElement({type = MENU, id = "SmiteMarker", name = "Smite Marker Minions"})
 SmiteMenu.SmiteMarker:MenuElement({id = "Enabled", name = "Enabled", value = true})
 SmiteMenu.SmiteMarker:MenuElement({id = "MarkBaron", name = "Mark Baron", value = true, leftIcon = "http://puu.sh/rPuVv/933a78e350.png"})
@@ -32,6 +33,7 @@ SmiteMenu.AutoSmiter:MenuElement({id = "SmiteCrab", name = "Smite Crab", value =
 SmiteMenu:MenuElement({type = MENU, id = "AutoSmiterH", name = "Auto Smite Heroes"})
 SmiteMenu.AutoSmiterH:MenuElement({id = "Enabled", name = "Enabled", value = true, leftIcon = "http://puu.sh/rTVac/7ed9f87157.png"})
 
+local textPos = myHero.pos:To2D()
 
 local MarkTable = {
 	SRU_Baron = "MarkBaron",
@@ -120,6 +122,12 @@ end
 
 function OnDraw()
 if myHero.alive == false then return end
+if SmiteMenu.Enabled:Value() and SmiteMenu.Denabled:Value() then 
+Draw.Text("Smite ON", 20, textPos.x - 80, textPos.y + 40, Draw.Color(255, 000, 255, 000)) 
+end
+if SmiteMenu.Enabled:Value() == false and SmiteMenu.Denabled:Value() then 
+Draw.Text("Smite OFF", 20, textPos.x - 80, textPos.y + 40, Draw.Color(255, 000, 255, 000))
+end
 	if SmiteMenu.Enabled:Value() and (mySmiteSlot > 0) then
 		if SmiteMenu.SmiteMarker.Enabled:Value() or SmiteMenu.AutoSmiter.Enabled:Value() then
 			local SData = myHero:GetSpellData(mySmiteSlot);
