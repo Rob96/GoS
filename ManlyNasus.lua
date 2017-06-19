@@ -111,7 +111,7 @@ function Nasus:LoadMenu()
   self.Menu.cs:MenuElement({id = "Q", name = "Use Q", value = true})
   self.Menu.cs:MenuElement({id = "E", name = "Use E", value = true})
   self.Menu.cs:MenuElement({id = "Mana", name = "Min Mana for LastHit", value = 40, min = 0, max = 100})
-  self.Menu.cs:MenuElement({id = "QAuto", name = "Auto Q LastHit", value = true})
+  self.Menu.cs:MenuElement({id = "QAuto", name = "Auto Q LastHit", toggle = true, key = 85})
   self.Menu.cs:MenuElement({id = "QMana", name = "Min Mana For AutoQ LastHit", value = 40, min = 0, max = 100})
 
 
@@ -130,7 +130,7 @@ function Nasus:Combo()
   local target = GetTarget(650)
   if target == nil then return end
   if self.Menu.Combo.Q:Value () and Ready(_Q)  then
-    if myHero.pos:DistanceTo(target.pos) <= 320 then
+    if myHero.pos:DistanceTo(target.pos) <= myHero.range + 150 then
       Control.CastSpell(HK_Q)
     end
   end
@@ -149,7 +149,7 @@ end
 function Nasus:Harass()
   local target = GetTarget(650)
   if target == nil then return end
-  if self.Menu.Harass.Q:Value() and myHero.pos:DistanceTo(target.pos) <= 320 and Ready(_Q) and myHero.mana/myHero.maxMana >= self.Menu.Harass.Mana:Value() / 100 then
+  if self.Menu.Harass.Q:Value() and myHero.pos:DistanceTo(target.pos) <= myHero.range + 150 and Ready(_Q) and myHero.mana/myHero.maxMana >= self.Menu.Harass.Mana:Value() / 100 then
     Control.CastSpell(HK_Q)
   end
   if target == nil then return end
@@ -164,7 +164,7 @@ function Nasus:Lasthit()
     local QDamage = myHero:GetBuff(GetBuffIndexByName(myHero,"NasusQStacks")).stacks + ({30, 50, 70, 90, 110})[level] + myHero.totalDamage
     for i = 1, Game.MinionCount(320) do
       local target = Game.Minion(i)
-      if  target.team == 200 and myHero.pos:DistanceTo(target.pos) <= 320 then
+      if  target.team == 200 and myHero.pos:DistanceTo(target.pos) <= myHero.range + 100 then
         if QDamage >= target.health then 
           EnableOrb(false)
           Control.CastSpell(HK_Q)
@@ -195,16 +195,17 @@ function Nasus:Misc()
     for i = 1, Game.MinionCount(320) do
       local target = Game.Minion(i)
       if target == nil then return end
-      if  target.team == 200 and myHero.pos:DistanceTo(target.pos) <= myHero.range + 50  and QDamage >= target.health then
+      if  target.team == 200 and myHero.pos:DistanceTo(target.pos) <= myHero.range + 150  and QDamage >= target.health then
         EnableOrb(false)
         Control.CastSpell(HK_Q)
+        Control.Attack(target)
         Control.Attack(target)
         DelayAction(function() EnableOrb(true) end, 0.3)
       end
     end
 
     if self.Menu.Combo.R:Value() and myHero.health/myHero.maxHealth < self.Menu.Combo.RHP:Value() / 100 and Ready(_R) then
-      local target = GetTarget(1000)
+      local target = GetTarget(650)
       if target == nil then return end
       Control.CastSpell(HK_R)
     end
@@ -216,7 +217,7 @@ function Nasus:JClear()
     for i = 1, Game.MinionCount(myHero.range) do
       local target = Game.Minion(i)
       if target == nil then return end
-      if  target.team == 300 and myHero.pos:DistanceTo(target.pos) <= myHero.range then
+      if  target.team == 300 and myHero.pos:DistanceTo(target.pos) <= myHero.range + 150 then
         Control.CastSpell(HK_Q)
       end
     end
@@ -238,7 +239,7 @@ function Nasus:LClear()
     for i = 1, Game.MinionCount(myHero.range) do
       local target = Game.Minion(i)
       if target == nil then return end
-      if  target.team == 200 and myHero.pos:DistanceTo(target.pos) <= myHero.range then
+      if  target.team == 200 and myHero.pos:DistanceTo(target.pos) <= myHero.range + 150 then
         Control.CastSpell(HK_Q)
       end
     end
