@@ -110,8 +110,7 @@ local function GetDamage(spell,target)
 end
 
 function Xayah:AutoRoot()
-  local x = self.Menu.Misc.AR:Value()
-  if Ready(_E)then
+  if Ready(_E) and self.Menu.Misc.AR:Value() then
     local heroesToRoot=0
     for i=1,Game.HeroCount() do
       local hero=Game.Hero(i)
@@ -232,11 +231,11 @@ function Xayah:Misc()
       Control.CastSpell(HK_Q, pred.castPos)
     end
   end
-  if self.Menu.Misc.R:Value() and Ready(_R) and myHero.pos:DistanceTo(target.pos) < 1100 then PrintChat("1")
+  if self.Menu.Misc.R:Value() and Ready(_R) and myHero.pos:DistanceTo(target.pos) < 1100 then 
     local Rdata = {speed = R.speed, delay = R.delay ,range = R.range, coneAngle = R.coneAngle}
     local Rspell = Prediction:SetSpell(Rdata, TYPE_CONE, true)
     local pred = Rspell:GetPrediction(target,myHero.pos)
-    if pred == nil then return end PrintChat("2")
+    if pred == nil then return end 
     if pred and pred.hitChance >= 0 and pred:hCollision() >= self.Menu.Misc.AAR:Value() -1 then
       Control.CastSpell(HK_R, pred.castPos)
     end
