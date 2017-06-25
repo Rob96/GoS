@@ -169,20 +169,6 @@ local function GetTarget(range)
   return target
 end
 
-local function GetPercentHP(unit)
-  if type(unit) ~= "userdata" then error("{GetPercentHP}: bad argument #1 (userdata expected, got "..type(unit)..")") end
-  return 100*unit.health/unit.maxHealth
-end
-
-local function HpPred(unit, delay)
-  if _G.GOS then
-    hp =  GOS:HP_Pred(unit,delay)
-  else
-    hp = unit.health
-  end
-  return hp
-end
-
 local function EnableOrb(bool)
   if Orb == 1 then
     EOW:SetMovements(bool)
@@ -200,7 +186,7 @@ function Xayah:Combo()
   local target = GetTarget(1100)
   if target == nil then return
   end
-  if self.Menu.Combo.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) < 1100 then
+  if self.Menu.Combo.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > myHero.range then
     local Qdata = {speed = Q.speed, delay = Q.delay ,range = Q.range}
     local Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
     local pred = Qspell:GetPrediction(target,myHero.pos)
@@ -209,7 +195,7 @@ function Xayah:Combo()
       Control.CastSpell(HK_Q, pred.castPos)
     end
   end
-  if self.Menu.Combo.W:Value() and Ready(_W) and myHero.pos:DistanceTo(target.pos) < myHero.range then
+  if self.Menu.Combo.W:Value() and Ready(_W) and myHero.pos:DistanceTo(target.pos) =< myHero.range then
     Control.CastSpell(HK_W)
   end
 end
@@ -218,7 +204,7 @@ function Xayah:Misc()
   local target = GetTarget(1100)
   if target == nil then return
   end
-  if self.Menu.KS.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) < 1100 then
+  if self.Menu.KS.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > myHero.range then
     local level = myHero:GetSpellData(_Q).level
     local Qdamage = ({40, 60, 80, 100, 120})[level] * 2 + 0.5 * myHero.bonusDamage
     local Qdata = {speed = Q.speed, delay = Q.delay ,range = Q.range}
