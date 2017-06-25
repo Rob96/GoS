@@ -186,7 +186,7 @@ function Xayah:Combo()
   local target = GetTarget(1100)
   if target == nil then return
   end
-  if self.Menu.Combo.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > myHero.range then
+  if self.Menu.Combo.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > myHero.range +10 then
     local Qdata = {speed = Q.speed, delay = Q.delay ,range = Q.range}
     local Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
     local pred = Qspell:GetPrediction(target,myHero.pos)
@@ -195,16 +195,15 @@ function Xayah:Combo()
       Control.CastSpell(HK_Q, pred.castPos)
     end
   end
-  if self.Menu.Combo.W:Value() and Ready(_W) and myHero.pos:DistanceTo(target.pos) =< myHero.range then
-    Control.CastSpell(HK_W)
-  end
+ if self.Menu.Combo.W:Value() and Ready(_W) and myHero.pos:DistanceTo(target.pos) < myHero.range then
+ Control.CastSpell(HK_W)
 end
-
+end
 function Xayah:Misc()
   local target = GetTarget(1100)
   if target == nil then return
   end
-  if self.Menu.KS.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > myHero.range then
+  if self.Menu.KS.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > myHero.range + 10 then
     local level = myHero:GetSpellData(_Q).level
     local Qdamage = ({40, 60, 80, 100, 120})[level] * 2 + 0.5 * myHero.bonusDamage
     local Qdata = {speed = Q.speed, delay = Q.delay ,range = Q.range}
