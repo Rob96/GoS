@@ -175,7 +175,7 @@ if self.Menu.Combo.Q:Value() and Ready(_Q) then
   if myHero.pos:DistanceTo(Enemy.pos)>=self.Menu.Misc.Qmin:Value() and myHero.pos:DistanceTo(Enemy.pos)<=self.Menu.Misc.Qmax:Value()
   then
 	local Qdata = {speed = Q.speed, delay = Q.delay,range = Q.range }
-	local Qspell = Prediction:SetSpell(Qdata, TYPE_LINEAR, true)
+	local Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
 	local pred = Qspell:GetPrediction(Enemy,myHero.pos)
 	if pred == nil then return end
 	if pred and pred.hitChance >= hitchance and pred:mCollision() == 0 and pred:hCollision() == 0 then
@@ -215,7 +215,7 @@ if self.Menu.Harass.Q:Value() and Ready(_Q)then
   if myHero.pos:DistanceTo(Enemy.pos)>=self.Menu.Misc.Qmin:Value() and myHero.pos:DistanceTo(Enemy.pos)<=self.Menu.Misc.Qmax:Value()
   then
 	local Qdata = {speed = Q.speed, delay = Q.delay,range = Q.range }
-	local Qspell = Prediction:SetSpell(Qdata, TYPE_LINEAR, true)
+	local Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
 	local pred = Qspell:GetPrediction(Enemy,myHero.pos)
 	if pred == nil then return end
 	if pred and pred.hitChance >= hitchance and pred:mCollision() == 0 and pred:hCollision() == 0 then
@@ -253,7 +253,7 @@ if self.Menu.Misc.Q:Value() and Ready(_Q)then
   if myHero.pos:DistanceTo(Enemy.pos)>=self.Menu.Misc.Qmin:Value() and myHero.pos:DistanceTo(Enemy.pos)<=self.Menu.Misc.Qmax:Value()
   then
 	local Qdata = {speed = Q.speed, delay = Q.delay,range = Q.range }
-	local Qspell = Prediction:SetSpell(Qdata, TYPE_LINEAR, true)
+	local Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
 	local pred = Qspell:GetPrediction(Enemy,myHero.pos)
 	if pred == nil then return end
 	if pred and pred.hitChance >= hitchance and pred:mCollision() == 0 and pred:hCollision() == 0 then
