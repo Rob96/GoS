@@ -2,6 +2,8 @@
 class "BlitzCrank"
 require('Eternal Prediction')
 ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
 function BlitzCrank:__init()
 	if myHero.charName ~= "Blitzcrank" then return end
 	
@@ -18,7 +20,11 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 function BlitzCrank:LoadSpells()
   Q = {range = 925, delay = 0.1, speed = 1800, width = 70 }
+  Qdata = {speed = Q.speed, delay = Q.delay,range = Q.range }
+  Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
 end
+
+
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 local function Ready (spell)
   return Game.CanUseSpell(spell) == 0 
@@ -174,8 +180,6 @@ if self.Menu.Combo.Q:Value() and Ready(_Q) then
   if self.Menu.Misc.OnlyQ[Enemy.networkID]:Value() then
   if myHero.pos:DistanceTo(Enemy.pos)>=self.Menu.Misc.Qmin:Value() and myHero.pos:DistanceTo(Enemy.pos)<=self.Menu.Misc.Qmax:Value()
   then
-	local Qdata = {speed = Q.speed, delay = Q.delay,range = Q.range }
-	local Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
 	local pred = Qspell:GetPrediction(Enemy,myHero.pos)
 	if pred == nil then return end
 	if pred and pred.hitChance >= hitchance and pred:mCollision() == 0 and pred:hCollision() == 0 then
@@ -214,8 +218,6 @@ if self.Menu.Harass.Q:Value() and Ready(_Q)then
   if self.Menu.Misc.OnlyQ[Enemy.networkID]:Value() then
   if myHero.pos:DistanceTo(Enemy.pos)>=self.Menu.Misc.Qmin:Value() and myHero.pos:DistanceTo(Enemy.pos)<=self.Menu.Misc.Qmax:Value()
   then
-	local Qdata = {speed = Q.speed, delay = Q.delay,range = Q.range }
-	local Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
 	local pred = Qspell:GetPrediction(Enemy,myHero.pos)
 	if pred == nil then return end
 	if pred and pred.hitChance >= hitchance and pred:mCollision() == 0 and pred:hCollision() == 0 then
@@ -252,8 +254,6 @@ if self.Menu.Misc.Q:Value() and Ready(_Q)then
   if self.Menu.Misc.OnlyQ[Enemy.networkID]:Value() then
   if myHero.pos:DistanceTo(Enemy.pos)>=self.Menu.Misc.Qmin:Value() and myHero.pos:DistanceTo(Enemy.pos)<=self.Menu.Misc.Qmax:Value()
   then
-	local Qdata = {speed = Q.speed, delay = Q.delay,range = Q.range }
-	local Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
 	local pred = Qspell:GetPrediction(Enemy,myHero.pos)
 	if pred == nil then return end
 	if pred and pred.hitChance >= hitchance and pred:mCollision() == 0 and pred:hCollision() == 0 then
