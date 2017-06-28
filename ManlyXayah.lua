@@ -17,6 +17,7 @@ function Xayah:__init()
   self:LoadSpells()
   self:LoadMenu()
   Callback.Add("Tick", function() self:Tick() end)
+  Callback.Add("Draw", function() self:Draw() end)
 end
 
 function Xayah:LoadMenu()
@@ -38,8 +39,22 @@ function Xayah:LoadMenu()
   self.Menu.Misc:MenuElement({id = "x", name = "Min enemies to root",  value = 2, min = 1, max = 5})
   self.Menu.Misc:MenuElement({id = "R", name = "Auto R", value = true})
   self.Menu.Misc:MenuElement({id = "AAR", name = "R if X enemies hit",  value = 2, min = 1, max = 5})
+  self.Menu.Misc:MenuElement({id = "Qchance", name = "Q Pred", value = 0.1 ,min = 0.01, max = 1, step = 0.01})
+  self.Menu.Misc:MenuElement({id = "Qrange", name = "Min Q Range", value = 550, min = 10, max = 1100, step = 10})
+  
+  --Draw
+  self.Menu:MenuElement({type = MENU, id = "Draw", name = "Draw"})
+  self.Menu.Draw:MenuElement({id = "Q", name = "Draw min Q range", value = true})
+  self.Menu.Draw:MenuElement({id = "R", name = "Draw R range", value =  true})
+  self.Menu.Draw:MenuElement({id = "F", name = "Feather line and counter", value = true})
 
   self.Menu:MenuElement({type = PARAM, id = "Time", name = "Feather-Refresh Time[?]", value = 0.5,min=0.1,max=1,step=0.1,tooltip="Depends On Your PC's Perfomance"})
+end
+
+local function DrawLine3D(k1,k2,width,col)
+  local p1 = k1:To2D()
+  local p2 = k2:To2D()
+  Draw.Line(p1.x, p1.y, p2.x, p2.y, width, col)
 end
 
 local function Ready(spell)
@@ -129,8 +144,12 @@ end
 --
 
 function Xayah:LoadSpells()
-  Q = {delay = 0.3, range = 1100,speed = 700, width = 50}
+  Q = {delay = 0.4, range = 1100,speed = 600, width = 50}
+  Qdata = {speed = Q.speed, delay = Q.delay ,range = Q.range}
+  Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
   R = {delay = 1,range = 1100,speed = 2200,coneAngle = 45}
+  Rdata = {speed = R.speed, delay = R.delay ,range = R.range, coneAngle = R.coneAngle}
+  Rspell = Prediction:SetSpell(Rdata, TYPE_CONE, true)
 end
 
 local intToMode = {
@@ -183,16 +202,15 @@ local function EnableOrb(bool)
 end
 
 function Xayah:Combo()
+local QR = self.Menu.Misc.Qrange:Value()
+local QC = self.Menu.Misc.Qchance:Value()
   local target = GetTarget(1100)
-  if target == nil then return
-  end
-  if self.Menu.Combo.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > myHero.range +10 then
-    local Qdata = {speed = Q.speed, delay = Q.delay ,range = Q.range}
-    local Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
-    local pred = Qspell:GetPrediction(target,myHero.pos)
-    if pred == nil then return end
-    if pred and pred.hitChance >= 0.15 then
-      Control.CastSpell(HK_Q, pred.castPos)
+  if target == nil then return end
+  local Qpred = Qspell:GetPrediction(target,myHero.pos)
+  if self.Menu.Combo.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > QR then
+    if Qpred == nil then return end
+    if Qpred and Qpred.hitChance >= QC then
+      Control.CastSpell(HK_Q, Qpred.castPos)
     end
   end
  if self.Menu.Combo.W:Value() and Ready(_W) and myHero.pos:DistanceTo(target.pos) < myHero.range then
@@ -200,29 +218,26 @@ function Xayah:Combo()
 end
 end
 function Xayah:Misc()
+local QR = self.Menu.Misc.Qrange:Value()
+local QC = self.Menu.Misc.Qchance:Value()
   local target = GetTarget(1100)
-  if target == nil then return
-  end
-  if self.Menu.KS.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > myHero.range + 10 then
-    local level = myHero:GetSpellData(_Q).level
-    local Qdamage = ({40, 60, 80, 100, 120})[level] * 2 + 0.5 * myHero.bonusDamage
-    local Qdata = {speed = Q.speed, delay = Q.delay ,range = Q.range}
-    local Qspell = Prediction:SetSpell(Qdata, TYPE_LINE, true)
-    local pred = Qspell:GetPrediction(target,myHero.pos)
-    if pred == nil then return end
-    if pred and pred.hitChance >= 0.15 and Qdamage >= target.health and pred:hCollision() == 0 and pred:mCollision() == 0 then
-      Control.CastSpell(HK_Q, pred.castPos)
-    elseif pred and pred.hitChance >= 0.15 and Qdamage / 2 >= target.health then
-      Control.CastSpell(HK_Q, pred.castPos)
+  if target == nil then return end
+  local level = myHero:GetSpellData(_Q).level
+  local Qdamage = ({40, 60, 80, 100, 120})[level] * 2 + 0.5 * myHero.bonusDamage
+  local Rpred = Rspell:GetPrediction(target,myHero.pos)
+  local Qpred = Qspell:GetPrediction(target,myHero.pos)
+  if self.Menu.KS.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > QR then
+    if Qpred == nil then return end
+    if Qpred and Qpred.hitChance >= QC and Qdamage >= target.health and Qpred:hCollision() == 0 and Qpred:mCollision() == 0 then
+      Control.CastSpell(HK_Q, Qpred.castPos)
+    elseif Qpred and Qpred.hitChance >= 0.1 and Qdamage / 2 >= target.health then
+      Control.CastSpell(HK_Q, Qpred.castPos)
     end
   end
   if self.Menu.Misc.R:Value() and Ready(_R) and myHero.pos:DistanceTo(target.pos) < 1100 then 
-    local Rdata = {speed = R.speed, delay = R.delay ,range = R.range, coneAngle = R.coneAngle}
-    local Rspell = Prediction:SetSpell(Rdata, TYPE_CONE, true)
-    local pred = Rspell:GetPrediction(target,myHero.pos)
-    if pred == nil then return end 
-    if pred and pred.hitChance >= 0 and pred:hCollision() >= self.Menu.Misc.AAR:Value() -1 then
-      Control.CastSpell(HK_R, pred.castPos)
+    if Rpred == nil then return end 
+    if Rpred and Rpred.hitChance > 0 and Rpred:hCollision() >= self.Menu.Misc.AAR:Value() -1 then
+      Control.CastSpell(HK_R, Rpred.castPos)
     end
   end
   if self.Menu.KS.E:Value() and Ready(_E) and GetDamage(_E, target) > target.health then
@@ -251,6 +266,25 @@ function Xayah:Tick()
     end
   end
 end
+
+function Xayah:Draw()
+local Q = self.Menu.Misc.Qrange:Value()
+local textPos = myHero.pos:To2D()
+local f = 0
+	if #feathers~=0 and self.Menu.Draw.F:Value() then
+		for k,feather in pairs(feathers) do
+			DrawLine3D(Vector(feather.pos),Vector(myHero.pos),1)
+      f = f +1
+		end
+    Draw.Text("Feathers = "..f, 20, textPos.x - 40, textPos.y + 80, Draw.Color(255, 000, 255, 000)) 
+	end
+if self.Menu.Draw.Q:Value() then
+Draw.Circle(Vector(myHero.pos),Q)
+end
+if self.Menu.Draw.R:Value() then
+Draw.Circle(Vector(myHero.pos),1000)
+end
+	end
 
 function OnLoad()
   Xayah()
