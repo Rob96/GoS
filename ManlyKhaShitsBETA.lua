@@ -111,7 +111,11 @@ function Khazix:LoadMenu()
   self.Menu.Combo.E:MenuElement({id = "E", name = "Use E", value = true})
   self.Menu.Combo.E:MenuElement(({id = "Emax", name = "Max Range for E", value = 950, min = 50, max = 900}))
   self.Menu.Combo.E:MenuElement(({id = "Emin", name = "Min Range for E", value = 400, min = 50, max = 900}))
-  
+---------------------------------------------------------------------------------------------------------------------------------------------------
+self.Menu:MenuElement({type = MENU, id = "Clear", name = "Lane / Jungle Clear"})
+self.Menu.Clear:MenuElement({id = "Q", name = "Use Q", Value = true})
+self.Menu.Clear:MenuElement({id = "W", name = "Use W", Value = true})
+self.Menu.Clear:MenuElement({id = "E", name = "Use E", Value = true})
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 self.Menu:MenuElement({type = MENU, id ="Evolved", name = "Evolved spells"})
 self.Menu.Evolved:MenuElement({type = SPACE, id ="i", name = "Enable when evolved"})
@@ -134,7 +138,9 @@ function Khazix:Tick()
 local Mode = GetMode()
 	if Mode == "Combo" then
 		self:Combo()
-	end
+  elseif Mode == "Clear" then
+  self:JClear() self:LClear()
+  end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -185,6 +191,48 @@ end
 -- Control.CastSpell(HK_R)
 -- end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
+end
+
+ function Khazix:JClear()
+local Qrange
+local Erange
+if self.Menu.Evolved.Q:Value() then Qrange = 375 else Qrange = 325 end
+if self.Menu.Evolved.E:Value() then Erange = 900 ES = EEvolvedspell else Erange = 700 ES = Espell end
+  for i = 1, Game.MinionCount(1200) do
+    local minion = Game.Minion(i)
+    if  minion.team == 300 then
+      if myHero.pos:DistanceTo(minion.pos) < Qrange and self.Menu.Clear.Q:Value() and Ready(_Q) and myHero.attackData.state == STATE_WINDDOWN then
+        Control.CastSpell(HK_Q,minion)
+      end
+      if myHero.pos:DistanceTo(minion.pos) < Erange and self.Menu.Clear.E:Value() and Ready(_E) then
+        Control.CastSpell(HK_E,minion.pos)
+      end
+      if myHero.pos:DistanceTo(minion.pos) < 1100 and self.Menu.Clear.W:Value() and Ready(_W) then
+        Control.CastSpell(HK_W, minion.pos)
+      end
+    end
+  end
+end
+
+function Khazix:LClear()
+local Qrange
+local Erange
+if self.Menu.Evolved.Q:Value() then Qrange = 375 else Qrange = 325 end
+if self.Menu.Evolved.E:Value() then Erange = 900 ES = EEvolvedspell else Erange = 700 ES = Espell end
+  for i = 1, Game.MinionCount(1200) do
+    local minion = Game.Minion(i)
+    if  minion.team == 200 then
+      if myHero.pos:DistanceTo(minion.pos) < Qrange and self.Menu.Clear.Q:Value() and Ready(_Q) then
+        Control.CastSpell(HK_Q,minion)
+      end
+      if myHero.pos:DistanceTo(minion.pos) < Erange and self.Menu.Clear.E:Value() and Ready(_E) then
+        Control.CastSpell(HK_E,minion.pos)
+      end
+      if myHero.pos:DistanceTo(minion.pos) < 1100 and self.Menu.Clear.W:Value() and Ready(_W) then
+        Control.CastSpell(HK_W, minion.pos)
+      end
+    end
+  end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 function Khazix:Draw()
