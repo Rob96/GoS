@@ -144,7 +144,6 @@ local ES
 local hitchance = self.Menu.Combo.W.Wpred:Value()
 local target = GetTarget(1200)
 if target == nil then return end
-print(myHero:GetSpellData(_E).name)
 if myHero:GetSpellData(_Q).name == "KhazixQ" then Qrange = 325 else Qrange = 375 end
 if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 ES = Espell else Erange = 900 ES = EEvolvedspell end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
