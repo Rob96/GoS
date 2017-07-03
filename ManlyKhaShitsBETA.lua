@@ -1,7 +1,6 @@
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 class "Khazix"
 require('Eternal Prediction')
-local evtext = "Auto check will be added later"
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -117,13 +116,6 @@ self.Menu.Clear:MenuElement({id = "Q", name = "Use Q", Value = true})
 self.Menu.Clear:MenuElement({id = "W", name = "Use W", Value = true})
 self.Menu.Clear:MenuElement({id = "E", name = "Use E", Value = true})
 ---------------------------------------------------------------------------------------------------------------------------------------------------
-self.Menu:MenuElement({type = MENU, id ="Evolved", name = "Evolved spells"})
-self.Menu.Evolved:MenuElement({type = SPACE, id ="i", name = "Enable when evolved"})
-self.Menu.Evolved:MenuElement({id = "Q", name = "Q", value = false})
-self.Menu.Evolved:MenuElement({id = "W", name = "W (No evolved logic implemented yet)", value = false})
-self.Menu.Evolved:MenuElement({id = "E", name = "E", value = false})
-self.Menu.Evolved:MenuElement({id = "R", name = "R (No evolved logic implemented yet)", value = false})
-self.Menu.Evolved:MenuElement({type = SPACE, id = "ii", name = "AutoCheck will be added in the future"})
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 	--[[Draw]]
@@ -135,6 +127,7 @@ self.Menu.Evolved:MenuElement({type = SPACE, id = "ii", name = "AutoCheck will b
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 function Khazix:Tick()
+if myHero.dead then return end
 local Mode = GetMode()
 	if Mode == "Combo" then
 		self:Combo()
@@ -151,8 +144,9 @@ local ES
 local hitchance = self.Menu.Combo.W.Wpred:Value()
 local target = GetTarget(1200)
 if target == nil then return end
-if self.Menu.Evolved.Q:Value() then Qrange = 375 else Qrange = 325 end
-if self.Menu.Evolved.E:Value() then Erange = 900 ES = EEvolvedspell else Erange = 700 ES = Espell end
+print(myHero:GetSpellData(_E).name)
+if myHero:GetSpellData(_Q).name == "KhazixQ" then Qrange = 325 else Qrange = 375 end
+if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 ES = Espell else Erange = 900 ES = EEvolvedspell end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 if self.Menu.Combo.Q.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) <= Qrange then
 if self.Menu.Combo.Q.QReset:Value() == false then 
@@ -196,8 +190,8 @@ end
  function Khazix:JClear()
 local Qrange
 local Erange
-if self.Menu.Evolved.Q:Value() then Qrange = 375 else Qrange = 325 end
-if self.Menu.Evolved.E:Value() then Erange = 900 ES = EEvolvedspell else Erange = 700 ES = Espell end
+if myHero:GetSpellData(_Q).name == "KhazixQ" then Qrange = 325 else Qrange = 375 end
+if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 ES = Espell else Erange = 900 ES = EEvolvedspell end
   for i = 1, Game.MinionCount(1200) do
     local minion = Game.Minion(i)
     if  minion.team == 300 then
@@ -217,8 +211,8 @@ end
 function Khazix:LClear()
 local Qrange
 local Erange
-if self.Menu.Evolved.Q:Value() then Qrange = 375 else Qrange = 325 end
-if self.Menu.Evolved.E:Value() then Erange = 900 ES = EEvolvedspell else Erange = 700 ES = Espell end
+if myHero:GetSpellData(_Q).name == "KhazixQ" then Qrange = 325 else Qrange = 375 end
+if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 ES = Espell else Erange = 900 ES = EEvolvedspell end
   for i = 1, Game.MinionCount(1200) do
     local minion = Game.Minion(i)
     if  minion.team == 200 then
@@ -240,8 +234,8 @@ local Qrange
 local Erange
 local x = Draw.Color(255, 255, 255, 255)
 if myHero.dead then return end
-if self.Menu.Evolved.Q:Value() then Qrange = 375 else Qrange = 325 end
-if self.Menu.Evolved.E:Value() then Erange = 900 else Erange = 700 end
+if myHero:GetSpellData(_Q).name == "KhazixQ" then Qrange = 325 else Qrange = 375 end
+if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 ES = Espell else Erange = 900 ES = EEvolvedspell end
   if self.Menu.Draw.Q:Value() then
   Draw.Circle(myHero.pos, Qrange, 1,x)
   end
