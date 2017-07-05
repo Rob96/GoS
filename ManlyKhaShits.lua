@@ -93,6 +93,10 @@ local function EnableOrb(bool)
   end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
+function PercentMP(target)
+    return 100 * target.mana / target.maxMana
+end
+---------------------------------------------------------------------------------------------------------------------------------------------------
 function Khazix:LoadMenu()
 	self.Menu = MenuElement({type = MENU, id = "Khazix", name = "ManlyKha´Shits"})
 ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -115,8 +119,11 @@ function Khazix:LoadMenu()
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 self.Menu:MenuElement({type = MENU, id = "Clear", name = "Lane / Jungle Clear"})
 self.Menu.Clear:MenuElement({id = "Q", name = "Use Q", Value = true})
+self.Menu.Clear:MenuElement({id = "MQ", name = "Min mana for Q clear in %", value = 100, min = 0, max = 100, step = 1})
 self.Menu.Clear:MenuElement({id = "W", name = "Use W", Value = true})
+self.Menu.Clear:MenuElement({id = "MW", name = "Min mana for W clear in %", value = 100, min = 0, max = 100, step = 1})
 self.Menu.Clear:MenuElement({id = "E", name = "Use E", Value = true})
+self.Menu.Clear:MenuElement({id = "ME", name = "Min mana for E clear in %", value = 100, min = 0, max = 100, step = 1})
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -194,14 +201,20 @@ if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 ES = Espell else 
   for i = 1, Game.MinionCount(1200) do
     local minion = Game.Minion(i)
     if  minion.team == 300 then
+    if myHero.mana/myHero.maxMana > self.Menu.Clear.MQ:Value() / 100 then
       if myHero.pos:DistanceTo(minion.pos) < Qrange and self.Menu.Clear.Q:Value() and Ready(_Q) and myHero.attackData.state == STATE_WINDDOWN then
         Control.CastSpell(HK_Q,minion)
       end
+      end
+      if myHero.mana/myHero.maxMana > self.Menu.Clear.MW:Value() / 100 then
       if myHero.pos:DistanceTo(minion.pos) < Erange and self.Menu.Clear.E:Value() and Ready(_E) then
         Control.CastSpell(HK_E,minion.pos)
       end
+      end
+      if myHero.mana/myHero.maxMana > self.Menu.Clear.ME:Value() / 100 then
       if myHero.pos:DistanceTo(minion.pos) < 1100 and self.Menu.Clear.W:Value() and Ready(_W) then
         Control.CastSpell(HK_W, minion.pos)
+      end
       end
     end
   end
@@ -215,14 +228,20 @@ if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 ES = Espell else 
   for i = 1, Game.MinionCount(1200) do
     local minion = Game.Minion(i)
     if  minion.team == 200 then
+    if myHero.mana/myHero.maxMana > self.Menu.Clear.MQ:Value() / 100 then
       if myHero.pos:DistanceTo(minion.pos) < Qrange and self.Menu.Clear.Q:Value() and Ready(_Q) then
         Control.CastSpell(HK_Q,minion)
       end
+      end
+      if myHero.mana/myHero.maxMana > self.Menu.Clear.MW:Value() / 100 then
       if myHero.pos:DistanceTo(minion.pos) < Erange and self.Menu.Clear.E:Value() and Ready(_E) then
         Control.CastSpell(HK_E,minion.pos)
       end
+      end
+      if myHero.mana/myHero.maxMana > self.Menu.Clear.ME:Value() / 100 then
       if myHero.pos:DistanceTo(minion.pos) < 1100 and self.Menu.Clear.W:Value() and Ready(_W) then
         Control.CastSpell(HK_W, minion.pos)
+      end
       end
     end
   end
@@ -234,7 +253,7 @@ local Erange
 local x = Draw.Color(255, 255, 255, 255)
 if myHero.dead then return end
 if myHero:GetSpellData(_Q).name == "KhazixQ" then Qrange = 325 else Qrange = 375 end
-if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 ES = Espell else Erange = 900 ES = EEvolvedspell end
+if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 else Erange = 900 end
   if self.Menu.Draw.Q:Value() then
   Draw.Circle(myHero.pos, Qrange, 1,x)
   end
