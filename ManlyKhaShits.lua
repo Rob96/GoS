@@ -299,12 +299,12 @@ if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 ES = Espell else 
       end
       if myHero.mana/myHero.maxMana > self.Menu.Clear.MW:Value() / 100 then
       if myHero.pos:DistanceTo(minion.pos) < Erange and self.Menu.Clear.E:Value() and Ready(_E) then
-        Control.CastSpell(HK_E,minion.pos)
+        Control.CastSpell(HK_W,minion.pos)
       end
       end
       if myHero.mana/myHero.maxMana > self.Menu.Clear.ME:Value() / 100 then
       if myHero.pos:DistanceTo(minion.pos) < 1100 and self.Menu.Clear.W:Value() and Ready(_W) then
-        Control.CastSpell(HK_W, minion.pos)
+        Control.CastSpell(HK_E, minion.pos)
       end
       end
     end
@@ -326,12 +326,12 @@ if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 ES = Espell else 
       end
       if myHero.mana/myHero.maxMana > self.Menu.Clear.MW:Value() / 100 then
       if myHero.pos:DistanceTo(minion.pos) < Erange and self.Menu.Clear.E:Value() and Ready(_E) then
-        Control.CastSpell(HK_E,minion.pos)
+        Control.CastSpell(HK_W,minion.pos)
       end
       end
       if myHero.mana/myHero.maxMana > self.Menu.Clear.ME:Value() / 100 then
       if myHero.pos:DistanceTo(minion.pos) < 1100 and self.Menu.Clear.W:Value() and Ready(_W) then
-        Control.CastSpell(HK_W, minion.pos)
+        Control.CastSpell(HK_E, minion.pos)
       end
       end
     end
