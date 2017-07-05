@@ -93,8 +93,30 @@ local function EnableOrb(bool)
   end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
-function PercentMP(target)
-    return 100 * target.mana / target.maxMana
+---------------------------------------------------------------------------------------------------------------------------------------------------
+local function Qdmg(target)
+    local level = myHero:GetSpellData(_Q).level
+	if Ready(_Q) then
+    	return CalcPhysicalDamage(myHero, target, (35 + 25 * level + 1.10 * myHero.bonusDamage))
+	end
+	return 0
+end
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+local function Wdmg(target)
+    local level = myHero:GetSpellData(_W).level
+	if Ready(_W) then
+    	return CalcPhysicalDamage(myHero, target, (50 + 30 * level + 1.00 * myHero.bonusDamage))
+	end
+	return 0
+end
+---------------------------------------------------------------------------------------------------------------------------------------------------
+local function Edmg(target)
+    local level = myHero:GetSpellData(_E).level
+	if Ready(_E) then
+        return CalcPhysicalDamage(myHero, target, (30 + 35 * level + 0.20 * myHero.bonusDamage))
+	end
+	return 0
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 function Khazix:LoadMenu()
@@ -132,6 +154,7 @@ self.Menu.Clear:MenuElement({id = "ME", name = "Min mana for E clear in %", valu
   self.Menu.Draw:MenuElement({id = "Q", name = "Draw Q Range", value = true})
   self.Menu.Draw:MenuElement({id = "W", name = "Draw W Range", value = true})
   self.Menu.Draw:MenuElement({id = "E", name = "Draw E Range", value = true})
+  self.Menu.Draw:MenuElement({id = "dmg", name = "Show spell damage [?]", tooltip = "No isolation calculations yet", value = true})
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -263,9 +286,32 @@ if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 else Erange = 900
   if self.Menu.Draw.E:Value()  then
   Draw.Circle(myHero.pos, Erange,1,x)
   end
+
+  if self.Menu.Draw.dmg:Value() then
+		for i = 1, Game.HeroCount() do
+			local enemy = Game.Hero(i)
+			if enemy and enemy.isEnemy and not enemy.dead and enemy.visible then
+				local barPos = enemy.hpBar
+				local health = enemy.health
+				local maxHealth = enemy.maxHealth
+				local Qdmg = Qdmg(enemy)
+				local Wdmg = Wdmg(enemy)
+				local Edmg = Edmg(enemy)
+				local Damage = Qdmg + Wdmg + Edmg
+				if Damage < health then
+					Draw.Rect(barPos.x + (((health - Qdmg) / maxHealth) * 100), barPos.y, (Qdmg / maxHealth )*100, 10, Draw.Color(255, 225, 000, 000))
+					Draw.Rect(barPos.x + (((health - (Qdmg + Wdmg)) / maxHealth) * 100), barPos.y, (Wdmg / maxHealth )*100, 10, Draw.Color(255, 225, 000, 000))
+					Draw.Rect(barPos.x + (((health - (Qdmg + Wdmg + Edmg)) / maxHealth) * 100), barPos.y, (Edmg / maxHealth )*100, 10, Draw.Color(255, 225, 000, 000))
+				else
+    				Draw.Rect(barPos.x, barPos.y, (health / maxHealth ) * 100, 10, Draw.Color(255, 225, 000, 000))
+				end
+			end
+		end
+	end
   ---------------------------------------------------------------------------------------------------------------------------------------------------
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 function OnLoad()
