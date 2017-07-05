@@ -139,6 +139,21 @@ function Khazix:LoadMenu()
   self.Menu.Combo.E:MenuElement(({id = "Emax", name = "Max Range for E", value = 950, min = 50, max = 900}))
   self.Menu.Combo.E:MenuElement(({id = "Emin", name = "Min Range for E", value = 400, min = 50, max = 900}))
 ---------------------------------------------------------------------------------------------------------------------------------------------------
+  self.Menu:MenuElement({type = MENU, id = "KS", name = "Killsteal [?]", tooltip = "No isolation calculations yet"})
+  self.Menu.KS:MenuElement({type = MENU, id = "Q", name = "Q Settings"})
+  self.Menu.KS.Q:MenuElement({id = "Q", name = "Use Q", value = true})
+
+  self.Menu.KS:MenuElement({type = MENU, id = "W", name = "W Settings"})
+  self.Menu.KS.W:MenuElement({id = "W", name = "Use W", value = true})
+  self.Menu.KS.W:MenuElement(({id = "Wmax", name = "Max Range for W", value = 650, min = 50, max = 1100}))
+  self.Menu.KS.W:MenuElement(({id = "Wmin", name = "Min Range for W", value = 50, min = 50, max = 1100}))
+  self.Menu.KS.W:MenuElement({id = "Wpred", name = "Pred for W", value = 0.15, min = 0.01, max = 1, step = 0.01})
+
+  self.Menu.KS:MenuElement({type = MENU, id = "E", name = "E Settings"})
+  self.Menu.KS.E:MenuElement({id = "E", name = "Use E", value = true})
+  self.Menu.KS.E:MenuElement(({id = "Emax", name = "Max Range for E", value = 950, min = 50, max = 900}))
+  self.Menu.KS.E:MenuElement(({id = "Emin", name = "Min Range for E", value = 400, min = 50, max = 900}))
+---------------------------------------------------------------------------------------------------------------------------------------------------
 self.Menu:MenuElement({type = MENU, id = "Clear", name = "Lane / Jungle Clear"})
 self.Menu.Clear:MenuElement({id = "Q", name = "Use Q", Value = true})
 self.Menu.Clear:MenuElement({id = "MQ", name = "Min mana for Q clear in %", value = 100, min = 0, max = 100, step = 1})
@@ -166,6 +181,7 @@ local Mode = GetMode()
   elseif Mode == "Clear" then
   self:JClear() self:LClear()
   end
+  self:KS()
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -187,7 +203,8 @@ Control.CastSpell(HK_Q, target)
 end
 end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
-if self.Menu.Combo.E.E:Value() and Ready(_E) and myHero.pos:DistanceTo(target.pos) <= Erange and myHero.pos:DistanceTo(target.pos) <= self.Menu.Combo.E.Emax:Value() and myHero.pos:DistanceTo(target.pos) >= self.Menu.Combo.E.Emin:Value() then
+if self.Menu.Combo.E.E:Value() and Ready(_E)  then 
+if myHero.pos:DistanceTo(target.pos) <= Erange and myHero.pos:DistanceTo(target.pos) <= self.Menu.Combo.E.Emax:Value() and myHero.pos:DistanceTo(target.pos) >= self.Menu.Combo.E.Emin:Value() then
 	local pred = ES:GetPrediction(target,myHero.pos)
 	if pred == nil then return end
 	if pred and pred.hitChance >= 0.1 then
@@ -196,8 +213,10 @@ Control.CastSpell(HK_E, pred.castPos)
   EnableOrb(true)
 end 
 end
+end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
-if self.Menu.Combo.W.W:Value() and Ready(_W) and Ready(_E) == false and myHero.pos:DistanceTo(target.pos) <= self.Menu.Combo.W.Wmax:Value() and myHero.pos:DistanceTo(target.pos) >= self.Menu.Combo.W.Wmin:Value() then
+if self.Menu.Combo.W.W:Value() and Ready(_W) then 
+if myHero.pos:DistanceTo(target.pos) <= self.Menu.Combo.W.Wmax:Value() and myHero.pos:DistanceTo(target.pos) >= self.Menu.Combo.W.Wmin:Value() then
 	local pred = Wspell:GetPrediction(target,myHero.pos)
 	if pred == nil then return end
   	if pred and pred.hitChance >= hitchance and pred:mCollision() == 0 and pred:hCollision() == 0 then
@@ -212,9 +231,58 @@ Control.CastSpell(HK_W, pred.castPos)
 EnableOrb(true)
 end
 end
----------------------------------------------------------------------------------------------------------------------------------------------------
+end
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 end
+---------------------------------------------------------------------------------------------------------------------------------------------------
+function Khazix:KS()
+local Qrange
+local Erange
+local ES
+local hitchance = self.Menu.KS.W.Wpred:Value()
+local target = GetTarget(1200)
+if target == nil then return end
+if myHero:GetSpellData(_Q).name == "KhazixQ" then Qrange = 325 else Qrange = 375 end
+if myHero:GetSpellData(_E).name == "KhazixE" then Erange = 700 ES = Espell else Erange = 900 ES = EEvolvedspell end
+---------------------------------------------------------------------------------------------------------------------------------------------------
+if self.Menu.KS.Q.Q:Value() and Qdmg(target) > target.health and Ready(_Q) then 
+if myHero.pos:DistanceTo(target.pos) <= Qrange then
+Control.CastSpell(HK_Q,target)
+end
+end
+---------------------------------------------------------------------------------------------------------------------------------------------------
+if self.Menu.KS.E.E:Value() and Ready(_E) and Edmg(target) > target.health  then
+if myHero.pos:DistanceTo(target.pos) <= Erange and myHero.pos:DistanceTo(target.pos) <= self.Menu.KS.E.Emax:Value() and myHero.pos:DistanceTo(target.pos) >= self.Menu.KS.E.Emin:Value() then
+	local pred = ES:GetPrediction(target,myHero.pos)
+	if pred == nil then return end
+	if pred and pred.hitChance >= 0.1 then
+  EnableOrb(false)
+Control.CastSpell(HK_E, pred.castPos)
+  EnableOrb(true)
+end 
+end
+end
+-------------------------------------------------------------------------------------------------------------------------------------------------
+if self.Menu.KS.W.W:Value() and Ready(_W) and Wdmg(target) > target.health then
+if myHero.pos:DistanceTo(target.pos) <= self.Menu.KS.W.Wmax:Value() and myHero.pos:DistanceTo(target.pos) >= self.Menu.KS.W.Wmin:Value() then
+	local pred = Wspell:GetPrediction(target,myHero.pos)
+	if pred == nil then return end
+  	if pred and pred.hitChance >= hitchance and pred:mCollision() == 0 and pred:hCollision() == 0 then
+  EnableOrb(false)
+Control.CastSpell(HK_W, pred.castPos)
+EnableOrb(true)
+return end
+
+  if pred and pred.hitChance >= hitchance and myHero.pos:DistanceTo(target.pos) <= 260 then
+EnableOrb(false)
+Control.CastSpell(HK_W, pred.castPos)
+EnableOrb(true)
+end
+end
+end
+---------------------------------------------------------------------------------------------------------------------------------------------------
+end
+---------------------------------------------------------------------------------------------------------------------------------------------------
 
  function Khazix:JClear()
 local Qrange
