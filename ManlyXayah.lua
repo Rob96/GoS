@@ -260,7 +260,7 @@ local QR = self.Menu.Misc.Qrange:Value()
 local QC = self.Menu.Misc.Qchance:Value()
   local target = GetTarget(1100)
   if target == nil then return end
-  local level = myHero:GetSpellData(_Q).level
+  local level = math.max(myHero:GetSpellData(_Q).level,1)
   local Qdamage = ({40, 60, 80, 100, 120})[level] * 2 + 0.5 * myHero.bonusDamage
   local Rpred = Rspell:GetPrediction(target,myHero.pos)
   local Qpred = Qspell:GetPrediction(target,myHero.pos)
