@@ -7,6 +7,8 @@ local feathers={}
 local Feather = Collision:SetSpell(math.huge, 1800, 0.2, 40, true)
 local time=os.clock()
 
+
+
 function Xayah:__init()
   if myHero.charName ~= "Xayah" then return end
   if _G.EOWLoaded then
@@ -27,6 +29,17 @@ function Xayah:LoadMenu()
   self.Menu:MenuElement({type = MENU, id = "Combo", name = "Combo Settings"})
   self.Menu.Combo:MenuElement({id = "Q", name = "Use Q", value = true})
   self.Menu.Combo:MenuElement({id = "W", name = "Use W", value = true})
+
+  --Clear
+
+  self.Menu:MenuElement({type = MENU, id = "Clear", name = "Clear settings"})
+  self.Menu.Clear:MenuElement({id = "Q", name = "Use Q", Value = true})
+  self.Menu.Clear:MenuElement({id = "MQ", name = "Min mana for Q clear in %", value = 100, min = 0, max = 100, step = 1})
+  self.Menu.Clear:MenuElement({id = "W", name = "Use W", Value = true})
+  self.Menu.Clear:MenuElement({id = "MW", name = "Min mana for W clear in %", value = 100, min = 0, max = 100, step = 1})
+
+
+  
 
   --KS
   self.Menu:MenuElement({type = MENU, id = "KS", name = "KS"})
@@ -217,6 +230,31 @@ local QC = self.Menu.Misc.Qchance:Value()
  Control.CastSpell(HK_W)
 end
 end
+
+   function Xayah:Clear()
+  for i = 1, Game.MinionCount(1200) do
+    local minion = Game.Minion(i)
+    if  minion.team == 300 or minion.team == 200 then
+
+if myHero.mana/myHero.maxMana >= self.Menu.Clear.MQ:Value() / 100 and Ready(_Q) and self.Menu.Clear.Q:Value() then
+      local Qpred = Qspell:GetPrediction(minion,myHero.pos)
+      if Qpred == nil then return end
+    if Qpred and Qpred.hitChance >= 0.05 then
+      Control.CastSpell(HK_Q, Qpred.castPos)
+    end
+    end
+
+  if myHero.mana/myHero.maxMana >= self.Menu.Clear.MW:Value() / 100 and Ready(_W) and self.Menu.Clear.W:Value() then
+  if myHero.pos:DistanceTo(minion.pos) < myHero.range then
+  Control.CastSpell(HK_W)
+end
+end
+
+  end
+  end
+  end
+
+
 function Xayah:Misc()
 local QR = self.Menu.Misc.Qrange:Value()
 local QC = self.Menu.Misc.Qchance:Value()
@@ -246,11 +284,14 @@ local QC = self.Menu.Misc.Qchance:Value()
 end
 
 function Xayah:Tick()
+
   self:Misc()
   self:AutoRoot()
   local Mode = GetMode()
   if Mode == "Combo" then
     self:Combo()
+  elseif Mode == "Clear" then
+  self:Clear()  --self:JClear()
   end
   if os.clock()-time>self.Menu.Time:Value() then
     feathers={}
