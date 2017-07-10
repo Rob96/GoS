@@ -223,7 +223,9 @@ local QC = self.Menu.Misc.Qchance:Value()
   if self.Menu.Combo.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > QR then
     if Qpred == nil then return end
     if Qpred and Qpred.hitChance >= QC then
+    EnableOrb(false)
       Control.CastSpell(HK_Q, Qpred.castPos)
+      EnableOrb(true)
     end
   end
  if self.Menu.Combo.W:Value() and Ready(_W) and myHero.pos:DistanceTo(target.pos) < myHero.range then
@@ -240,7 +242,9 @@ if myHero.mana/myHero.maxMana >= self.Menu.Clear.MQ:Value() / 100 and Ready(_Q) 
       local Qpred = Qspell:GetPrediction(minion,myHero.pos)
       if Qpred == nil then return end
     if Qpred and Qpred.hitChance >= 0.05 then
+    EnableOrb(false)
       Control.CastSpell(HK_Q, Qpred.castPos)
+      EnableOrb(true)
     end
     end
 
@@ -267,15 +271,21 @@ local QC = self.Menu.Misc.Qchance:Value()
   if self.Menu.KS.Q:Value() and Ready(_Q) and myHero.pos:DistanceTo(target.pos) > QR then
     if Qpred == nil then return end
     if Qpred and Qpred.hitChance >= QC and Qdamage >= target.health and Qpred:hCollision() == 0 and Qpred:mCollision() == 0 then
+    EnableOrb(false)
       Control.CastSpell(HK_Q, Qpred.castPos)
+      EnableOrb(true)
     elseif Qpred and Qpred.hitChance >= 0.1 and Qdamage / 2 >= target.health then
+    EnableOrb(false)
       Control.CastSpell(HK_Q, Qpred.castPos)
+      EnableOrb(true)
     end
   end
   if self.Menu.Misc.R:Value() and Ready(_R) and myHero.pos:DistanceTo(target.pos) < 1100 then 
     if Rpred == nil then return end 
     if Rpred and Rpred.hitChance > 0 and Rpred:hCollision() >= self.Menu.Misc.AAR:Value() -1 then
+    EnableOrb(false)
       Control.CastSpell(HK_R, Rpred.castPos)
+      EnableOrb(true)
     end
   end
   if self.Menu.KS.E:Value() and Ready(_E) and GetDamage(_E, target) > target.health then
