@@ -497,7 +497,7 @@ function Rengar:Activator()
 	end
 
 	local Potion = items[2003] or items[2010] or items[2031] or items[2032] or items[2033]
-	if Potion  then print("nigga")if myHero:GetSpellData(Potion).currentCd == 0 then print("nigga2")if  self.Menu.Activator.Potions.Pot:Value() then print("nigga3")if PercentHP(myHero) < self.Menu.Activator.Potions.HP:Value() then print("nigga4")if NoPotion() then print("nigga5")
+	if Potion  then if myHero:GetSpellData(Potion).currentCd == 0 then if  self.Menu.Activator.Potions.Pot:Value() then if PercentHP(myHero) < self.Menu.Activator.Potions.HP:Value() then if NoPotion() then 
 		Control.CastSpell(HKITEM[Potion])
 	end
 	end end end end
