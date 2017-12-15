@@ -89,6 +89,22 @@ function Nasus:__init()
   Callback.Add('Draw', function() self:Draw() end)
 end
 
+function Nasus:GetInventoryItem(itemID)
+  for k, v in pairs({ ITEM_1, ITEM_2, ITEM_3, ITEM_4, ITEM_5, ITEM_6 }) do
+		if myHero:GetItemData(v).itemID == itemID and myHero:GetSpellData(v).currentCd == 0 then return v end
+	end
+	return nil
+end
+
+local function  Qdmg(target)
+-- local TriForce = self:GetInventoryItem(3078)
+-- local IceBorn = self:GetInventoryItem(3025)
+-- local Sheen = self:GetInventoryItem(3057)
+local level = myHero:GetSpellData(_Q).level
+return CalcPhysicalDamage(myHero, target, (myHero:GetBuff(GetBuffIndexByName(myHero,"NasusQStacks")).stacks + ({30, 50, 70, 90, 110})[level] + myHero.totalDamage))
+--local QDamage = myHero:GetBuff(GetBuffIndexByName(myHero,"NasusQStacks")).stacks + ({30, 50, 70, 90, 110})[level] + myHero.totalDamage
+end
+
 function Nasus:LoadMenu()
   self.Menu = MenuElement({type = MENU, id = "Nasus", name = "ManlyNasus"})
 
@@ -124,6 +140,7 @@ function Nasus:LoadMenu()
   self.Menu:MenuElement({type = MENU, id = "Draw", name = "Drawings"})
   self.Menu.Draw:MenuElement({id = "W", name = "Draw W Range", value = true})
   self.Menu.Draw:MenuElement({id = "E", name = "Draw E Range", value = true})
+  self.Menu.Draw:MenuElement({id = "Q", name = "Draw Q damage on enemy", value = true})
 end
 
 function Nasus:Combo()
@@ -160,12 +177,10 @@ end
 
 function Nasus:Lasthit()
   if self.Menu.cs.Q:Value() and Ready(_Q) and myHero.mana/myHero.maxMana >= self.Menu.cs.Mana:Value() / 100 then
-    local level = myHero:GetSpellData(_Q).level
-    local QDamage = myHero:GetBuff(GetBuffIndexByName(myHero,"NasusQStacks")).stacks + ({30, 50, 70, 90, 110})[level] + myHero.totalDamage
     for i = 1, Game.MinionCount(320) do
       local target = Game.Minion(i)
       if  target.team == 200 and myHero.pos:DistanceTo(target.pos) <= myHero.range + 100 then
-        if QDamage >= target.health then 
+        if Qdmg(target) > target.health then 
           EnableOrb(false)
           Control.CastSpell(HK_Q)
           Control.Attack(target)
@@ -190,12 +205,10 @@ end
 
 function Nasus:Misc()
   if self.Menu.cs.QAuto:Value() and Ready(_Q) and myHero.mana/myHero.maxMana >= self.Menu.cs.QMana:Value() / 100 then
-    local level = myHero:GetSpellData(_Q).level
-    local QDamage = myHero:GetBuff(GetBuffIndexByName(myHero,"NasusQStacks")).stacks + ({30, 50, 70, 90, 110})[level] + myHero.totalDamage 
     for i = 1, Game.MinionCount(320) do
       local target = Game.Minion(i)
       if target == nil then return end
-      if  target.team == 200 and myHero.pos:DistanceTo(target.pos) <= myHero.range + 150  and QDamage >= target.health then
+      if  target.team == 200 and myHero.pos:DistanceTo(target.pos) <= myHero.range + 150  and Qdmg(target) > target.health then 
         EnableOrb(false)
         Control.CastSpell(HK_Q)
         Control.Attack(target)
@@ -256,7 +269,7 @@ function Nasus:LClear()
   end
 end
 
-function Nasus:Tick()
+function Nasus:Tick() 
   local Mode = GetMode()
   if Mode == "Combo" then
     self:Combo() 
@@ -271,6 +284,7 @@ function Nasus:Tick()
   self:Misc()
 end
 
+
 function Nasus:Draw()
   if myHero.dead then return end
   if self.Menu.Draw.W:Value() then
@@ -279,7 +293,20 @@ function Nasus:Draw()
   if self.Menu.Draw.E:Value() then
     Draw.Circle(myHero.pos, 650, 1, Draw.Color(255, 255, 255, 255))
   end
-end
+  if self.Menu.Draw.Q:Value() then
+    for i = 1, Game.HeroCount() do
+      local target = Game.Hero(i)
+      if target and target.isEnemy and not target.dead and target.visible then
+        local barPos = target.hpBar
+        local health = target.health
+        local maxHealth = target.maxHealth
+        local Qdmg = Qdmg(target)
+          Draw.Rect(barPos.x + (( (health - Qdmg) / maxHealth) * 100) + 25, barPos.y - 13, (Qdmg / maxHealth )*100, 10, Draw.Color(255, 200, 200, 25))
+      end
+        end
+  end
+ end
+
 
 function OnLoad()
   Nasus()
