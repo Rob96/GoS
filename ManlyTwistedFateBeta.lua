@@ -70,6 +70,18 @@ local function EnableOrb(bool)
   end
 end
 
+local function EnableAttack(bool)
+ if Orb == 1 then
+  EOW:SetAttacks(bool)
+  else if Orb == 2 then
+    _G.SDK.Orbwalker:SetAttack(bool)
+    else if Orb == 3 then
+      GOS:BlockAttack(bool) -- Doesnt work, dunno if broken api or im retarded
+ end
+end
+end
+end
+
 local function NoPotion()
   for i = 0, 63 do
     local buff = myHero:GetBuff(i)
@@ -193,7 +205,6 @@ function ManlyTwistedFate:LoadMenu()
   self.Menu.Misc:MenuElement({type = SPACE})
   self.Menu.Misc:MenuElement({type = SPACE, name = "Beta"})
   self.Menu.Misc:MenuElement({id = "OrbW", name = "Disable Orb when picking card", value = false})
-  self.Menu.Misc:MenuElement({id = "ForceMove", name = "Force Move when picking card no orb?", value = true})
   self.Menu.Misc:MenuElement({type = SPACE})
   self.Menu.Misc:MenuElement({id = "lvEnabled", name = "Enable AutoLeveler", value = true})
   self.Menu.Misc:MenuElement({id = "Block", name = "Block on Level 1", value = true})
@@ -509,24 +520,15 @@ function ManlyTwistedFate:Misc()
   local QKSChance = self.Menu.Misc.QKSChance:Value()
 
   if self.Menu.Misc.OrbW:Value() then
-    if self.Menu.Misc.ForceMove:Value() then
       if self:HasBuff(myHero, "PickACard_tracker") then
-        EnableOrb(false)
-        Control.Move()
+
+        EnableAttack(false)
       else
         if self:HasBuff(myHero, "RedCardPreAttack") or self:HasBuff(myHero, "BlueCardPreAttack") or self:HasBuff(myHero, "GoldCardPreAttack")  then
-          EnableOrb(true)
+         EnableAttack(true)
         end
       end
-    else
-      if self:HasBuff(myHero, "PickACard_tracker") then
-        EnableOrb(false)
-      else if self:HasBuff(myHero, "RedCardPreAttack") or self:HasBuff(myHero, "BlueCardPreAttack") or self:HasBuff(myHero, "GoldCardPreAttack")  then
-        EnableOrb(true)
-      end
     end
-  end
-end
 
 
 
