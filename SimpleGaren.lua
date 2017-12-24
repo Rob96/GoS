@@ -47,16 +47,16 @@ end
 
 
 local function GetTarget(range)
-    local target = nil
-    if Orb == 1 then
-      target = EOW:GetTarget(range)
-    elseif Orb == 2 then
-      target = _G.SDK.TargetSelector:GetTarget(range)
-    elseif Orb == 3 then
-      target = GOS:GetTarget(range)
-    end
-    return target
+  local target = nil
+  if Orb == 1 then
+    target = EOW:GetTarget(range)
+  elseif Orb == 2 then
+    target = _G.SDK.TargetSelector:GetTarget(range)
+  elseif Orb == 3 then
+    target = GOS:GetTarget(range)
   end
+  return target
+end
 local function EnableOrb(bool)
   if Orb == 1 then
     EOW:SetMovements(bool)
@@ -71,14 +71,14 @@ local function EnableOrb(bool)
 end
 
 local function EnableAttack(bool)
-    if Orb == 1 then
-     EOW:SetAttacks(bool)
-     elseif Orb == 2 then
-       _G.SDK.Orbwalker:SetAttack(bool)
-       else
-         GOS.BlockAttack = not bool -- Doesnt work, dunno if broken api or im retarded
-    end
-   end
+  if Orb == 1 then
+    EOW:SetAttacks(bool)
+  elseif Orb == 2 then
+    _G.SDK.Orbwalker:SetAttack(bool)
+  else
+    GOS.BlockAttack = not bool -- Doesnt work, dunno if broken api or im retarded
+  end
+end
 
 
 local function NoPotion()
@@ -157,46 +157,46 @@ function EAround(pos, range)
 end
 
 function EnemiesAround(pos, range)
-    local Count = 0
-    for i = 1, Game.HeroCount() do
-      local Hero = Game.Hero(i)
-      if Hero and Hero.team ~= myHero.team and not Hero.dead and pos:DistanceTo(Hero.pos) <= range then
-        Count = Count + 1
-      end
+  local Count = 0
+  for i = 1, Game.HeroCount() do
+    local Hero = Game.Hero(i)
+    if Hero and Hero.team ~= myHero.team and not Hero.dead and pos:DistanceTo(Hero.pos) <= range then
+      Count = Count + 1
     end
-    return Count
   end
+  return Count
+end
 
-  function MinionsAround(pos, range)
-    local Count = 0
-    for i = 1, Game.MinionCount() do
-      local Minion = Game.Minion(i)
-      if Minion and Minion.team ~= myHero.team and not Minion.dead and pos:DistanceTo(Minion.pos) <= range then
-        Count = Count + 1
-      end
+function MinionsAround(pos, range)
+  local Count = 0
+  for i = 1, Game.MinionCount() do
+    local Minion = Game.Minion(i)
+    if Minion and Minion.team ~= myHero.team and not Minion.dead and pos:DistanceTo(Minion.pos) <= range then
+      Count = Count + 1
     end
-    return Count
   end
+  return Count
+end
 
-  function MonstersAround(pos, range)
-    local Count = 0
-    for i = 1, Game.MinionCount() do
-      local Minion = Game.Minion(i)
-      if Minion and Minion.team ~= myHero.team and not Minion.dead and pos:DistanceTo(Minion.pos) <= range and Minion.team == 300 then
-        Count = Count + 1
-      end
+function MonstersAround(pos, range)
+  local Count = 0
+  for i = 1, Game.MinionCount() do
+    local Minion = Game.Minion(i)
+    if Minion and Minion.team ~= myHero.team and not Minion.dead and pos:DistanceTo(Minion.pos) <= range and Minion.team == 300 then
+      Count = Count + 1
     end
-    return Count
   end
+  return Count
+end
 
-  function GetMinion(pos, range)
-    for i = 1, Game.MinionCount(range) do
-      local target = Game.Minion(i)
-      if  target.team == 200 or target.team == 300 then
-        return target
-      end
+function GetMinion(pos, range)
+  for i = 1, Game.MinionCount(range) do
+    local target = Game.Minion(i)
+    if  target.team == 200 or target.team == 300 then
+      return target
     end
   end
+end
 
 function PercentHP(target)
   return 100 * target.health / target.maxHealth
@@ -204,8 +204,8 @@ end
 
 
 local function Rdmg(target)
-local Rdamage = getdmg("R",target,myHero) or 0
-return Rdamage
+  local Rdamage = getdmg("R",target,myHero) or 0
+  return Rdamage
 end
 
 local function Qdmg(target)
@@ -234,15 +234,15 @@ function SimpleGaren:LoadMenu()
   -- Lasthit
   self.Menu:MenuElement({type = MENU, id = "Lasthit", name = "Lasthit"})
   self.Menu.Lasthit:MenuElement({id = "Q", name = "Q", value = true})
-  
+
   --[[Misc]]
   self.Menu:MenuElement({type = MENU, id = "Misc", name = "Misc"})
   self.Menu.Misc:MenuElement({id = "Q", name = "Q Flee", value = true})
   self.Menu.Misc:MenuElement({id = "CancleE", name = "Auto Cancle E"})
   self.Menu.Misc:MenuElement({id = "CancleERange", name = "Range to enemy hero E cancle", value = 500, min = 0, max = 1000, step = 25})
   self.Menu.Misc:MenuElement({id = "CancleEMinion", name = "Min lane-minions cancle E", value = 1, min = 0, max = 6, step = 1})
-  --self.Menu.Misc:MenuElement({id = "W", name = "Auto W on big hits and cc?", value = false}) 
-  self.Menu.Misc:MenuElement({type = SPACE})   
+  --self.Menu.Misc:MenuElement({id = "W", name = "Auto W on big hits and cc?", value = false})
+  self.Menu.Misc:MenuElement({type = SPACE})
   self.Menu.Misc:MenuElement({id = "lvEnabled", name = "Enable AutoLeveler", value = true})
   self.Menu.Misc:MenuElement({id = "Block", name = "Block on Level 1", value = true})
   self.Menu.Misc:MenuElement({id = "Order", name = "Skill Priority", drop = {"[Q] - [W] - [E] > Max [Q]","[Q] - [E] - [W] > Max [Q]","[W] - [Q] - [E] > Max [W]","[W] - [E] - [Q] > Max [W]","[E] - [Q] - [W] > Max [E]","[E] - [W] - [Q] > Max [E]"}})
@@ -269,7 +269,7 @@ function SimpleGaren:LoadMenu()
   --SUMMONER ACTIVATOR
   self.Menu.Activator:MenuElement({type = MENU, id = "Summoners", name = "Summoner Spells"})
   DelayAction(function()
-if myHero:GetSpellData(SUMMONER_1).name == "SummonerSmite" or myHero:GetSpellData(SUMMONER_1).name == "S5_SummonerSmitePlayerGanker" or myHero:GetSpellData(SUMMONER_1).name == "S5_SummonerSmiteDuel"
+  if myHero:GetSpellData(SUMMONER_1).name == "SummonerSmite" or myHero:GetSpellData(SUMMONER_1).name == "S5_SummonerSmitePlayerGanker" or myHero:GetSpellData(SUMMONER_1).name == "S5_SummonerSmiteDuel"
   or myHero:GetSpellData(SUMMONER_2).name == "SummonerSmite" or myHero:GetSpellData(SUMMONER_2).name == "S5_SummonerSmitePlayerGanker" or myHero:GetSpellData(SUMMONER_1).name == "S5_SummonerSmiteDuel" then
     self.Menu.Activator.Summoners:MenuElement({id = "Smite", name = "Smite in Combo [?]", value = true})
     self.Menu.Activator.Summoners:MenuElement({id = "SmiteS", name = "Smite Stacks to Combo", value = 1, min = 1, max = 2})
@@ -464,199 +464,199 @@ function SimpleGaren:Summoners()
               end
             end
           end
-end
+        end
 
 
-function SimpleGaren:Activator()
-  local target = GetTarget(2500)
-  local items = {}
-  for slot = ITEM_1,ITEM_6 do
-    local id = myHero:GetItemData(slot).itemID
-    if id > 0 then
-      items[id] = slot
-    end
-  end
-  --PASSIVE ACTIVATOR
-  local Potion = items[2003] or items[2010] or items[2031] or items[2032] or items[2033] -- All potions
-  if Potion and self.Menu.Activator.Potions.Pot:Value() then
-    if myHero:GetSpellData(Potion).currentCd == 0 and NoPotion()  then
-      if PercentHP(myHero) < self.Menu.Activator.Potions.HP:Value() then
-        Control.CastSpell(HKITEM[Potion])
+        function SimpleGaren:Activator()
+          local target = GetTarget(2500)
+          local items = {}
+          for slot = ITEM_1,ITEM_6 do
+            local id = myHero:GetItemData(slot).itemID
+            if id > 0 then
+              items[id] = slot
+            end
+          end
+          --PASSIVE ACTIVATOR
+          local Potion = items[2003] or items[2010] or items[2031] or items[2032] or items[2033] -- All potions
+          if Potion and self.Menu.Activator.Potions.Pot:Value() then
+            if myHero:GetSpellData(Potion).currentCd == 0 and NoPotion()  then
+              if PercentHP(myHero) < self.Menu.Activator.Potions.HP:Value() then
+                Control.CastSpell(HKITEM[Potion])
+              end
+            end
+          end
+          --COMBO MODE ACTIVATOR
+          if target == nil then return end
+          if GetMode() == "Combo" then
+            local QSS = items[3140] or items[3139] --QSS - Scimitar
+            if QSS then
+              if self.Menu.Activator.Items.QSS:Value() and myHero:GetSpellData(QSS).currentCd == 0 then
+                for i = 0, myHero.buffCount do
+                  local buff = myHero:GetBuff(i);
+                  if buff.count > 0 then
+                    if ((buff.type == 5 and self.Menu.Activator.Items.QSSS.Stun:Value())
+                    or (buff.type == 7 and  self.Menu.Activator.Items.QSSS.Silence:Value())
+                    or (buff.type == 8 and  self.Menu.Activator.Items.QSSS.Taunt:Value())
+                    or (buff.type == 9 and  self.Menu.Activator.Items.QSSS.Poly:Value())
+                    or (buff.type == 10 and  self.Menu.Activator.Items.QSSS.Slow:Value())
+                    or (buff.type == 11 and  self.Menu.Activator.Items.QSSS.Root:Value())
+                    or (buff.type == 21 and  self.Menu.Activator.Items.QSSS.Flee:Value())
+                    or (buff.type == 22 and  self.Menu.Activator.Items.QSSS.Charm:Value())
+                    or (buff.type == 25 and  self.Menu.Activator.Items.QSSS.Blind:Value())
+                    or (buff.type == 28 and  self.Menu.Activator.Items.QSSS.Flee:Value())) then
+                      Control.CastSpell(HKITEM[QSS])
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+
+        function SimpleGaren:Tick()
+          if myHero.dead then return end
+          local target = GetTarget(1500)
+          local Mode = GetMode()
+          self:Misc()
+          self:AutoLevel()
+          self:Activator()
+          self:Summoners()
+
+          if Mode == "Combo" then
+            self:Combo()
+          end
+          if Mode == "Clear" then
+            self:Clear()
+          end
+          if Mode == "Lasthit" then
+            self:Lasthit()
+          end
+          if Mode == "Flee" then
+            self:Flee()
+          end
+
+
+        end
+
+        function SimpleGaren:Combo()
+          if myHero.dead then return end
+          local target = GetTarget(1500)
+          local MinQ = self.Menu.Combo.QCloseRange:Value()
+          if target == nil then return end
+
+          if self.Menu.Combo.Q:Value() and Ready(_Q) then
+            if self.Menu.Combo.QReset:Value() then
+              if myHero.pos:DistanceTo(target.pos) <= myHero.range + 150 and
+              myHero.attackData.state == STATE_WINDDOWN then
+                EnableOrb(false)
+                Control.CastSpell(HK_Q)
+                Control.Attack(target)
+                DelayAction(function() EnableOrb(true) end, 0.15)
+              end
+            elseif self.Menu.Combo.QClose:Value() then
+              if myHero.pos:DistanceTo(target.pos) <= MinQ then
+                Control.CastSpell(HK_Q)
+              end
+            elseif myHero.pos:DistanceTo(target.pos) <= myHero.range + 150 then
+              Control.CastSpell(HK_Q)
+            end
+          end
+
+          if self.Menu.Combo.W:Value() and Ready(_W) then
+            if myHero.pos:DistanceTo(target.pos) <= 300 then
+              Control.CastSpell(HK_W)
+            end
+          end
+
+
+          if self.Menu.Combo.E:Value() and Ready(_E) and Ready(_Q) == false then
+            if self:HasBuff(myHero, "GarenQ") == false and self:HasBuff(myHero, "GarenE") == false  then
+              if myHero.pos:DistanceTo(target.pos) <= 350 then
+                Control.CastSpell(HK_E)
+              end
+            end
+          end
+
+
+          if self.Menu.Combo.R:Value() and Ready(_R) then
+            if Rdmg(target) > target.health and myHero.pos:DistanceTo(target.pos) <= 400 then
+              EnableOrb(false)
+              Control.CastSpell(HK_R, target)
+              DelayAction(function() EnableOrb(true) end, 0.28)
+            end
+          end
+
+        end
+
+
+        function SimpleGaren:Clear()
+          local Emobs = self.Menu.Clear.EMin:Value()
+
+          if self.Menu.Clear.Q:Value() and Ready(_Q) then
+            if MinionsAround(myHero.pos, 250) >= 1 and myHero.attackData.state == STATE_WINDDOWN then
+              Control.CastSpell(HK_Q)
+            end
+          end
+
+          if self.Menu.Clear.W:Value() and Ready(_W) then
+            if MonstersAround(myHero.pos, 200) >= 1 then
+              Control.CastSpell(HK_W)
+            end
+          end
+
+          if self.Menu.Clear.E:Value() and Ready(_E) and not self:HasBuff(myHero, "GarenE") then if
+          MinionsAround(myHero.pos, 350) >= Emobs or MonstersAround(myHero.pos, 350) >= 1 then
+            Control.CastSpell(HK_E)
+          end
+        end
+
       end
-    end
-  end
-  --COMBO MODE ACTIVATOR
-  if target == nil then return end
-  if GetMode() == "Combo" then
-    local QSS = items[3140] or items[3139] --QSS - Scimitar
-    if QSS then
-      if self.Menu.Activator.Items.QSS:Value() and myHero:GetSpellData(QSS).currentCd == 0 then
-        for i = 0, myHero.buffCount do
-          local buff = myHero:GetBuff(i);
-          if buff.count > 0 then
-            if ((buff.type == 5 and self.Menu.Activator.Items.QSSS.Stun:Value())
-            or (buff.type == 7 and  self.Menu.Activator.Items.QSSS.Silence:Value())
-            or (buff.type == 8 and  self.Menu.Activator.Items.QSSS.Taunt:Value())
-            or (buff.type == 9 and  self.Menu.Activator.Items.QSSS.Poly:Value())
-            or (buff.type == 10 and  self.Menu.Activator.Items.QSSS.Slow:Value())
-            or (buff.type == 11 and  self.Menu.Activator.Items.QSSS.Root:Value())
-            or (buff.type == 21 and  self.Menu.Activator.Items.QSSS.Flee:Value())
-            or (buff.type == 22 and  self.Menu.Activator.Items.QSSS.Charm:Value())
-            or (buff.type == 25 and  self.Menu.Activator.Items.QSSS.Blind:Value())
-            or (buff.type == 28 and  self.Menu.Activator.Items.QSSS.Flee:Value())) then
-              Control.CastSpell(HKITEM[QSS])
+
+
+      function SimpleGaren:Lasthit()
+        if self.Menu.Lasthit.Q:Value() and Ready(_Q) then
+          for i = 1, Game.MinionCount(320) do
+            local target = Game.Minion(i)
+            if  target.team == 200 and myHero.pos:DistanceTo(target.pos) <= myHero.range + 100 then
+              if Qdmg(target) > target.health then
+                EnableOrb(false)
+                Control.CastSpell(HK_Q)
+                Control.Attack(target)
+                DelayAction(function() EnableOrb(true) end, 0.3)
+              end
             end
           end
         end
       end
-    end
-  end
-end
 
-function SimpleGaren:Tick()
-  if myHero.dead then return end
-  local target = GetTarget(1500)
-  local Mode = GetMode()
-  self:Misc()
-  self:AutoLevel()
-  self:Activator()
-  self:Summoners()
+      function SimpleGaren:Misc()
+        local ERange = self.Menu.Misc.CancleERange:Value()
 
-  if Mode == "Combo" then
-    self:Combo()
-  end
-  if Mode == "Clear" then
-    self:Clear()
-  end
-  if Mode == "Lasthit" then
-    self:Lasthit()
-  end
-  if Mode == "Flee" then
-    self:Flee()
-  end
-  
-
-end
-
-function SimpleGaren:Combo()
-    if myHero.dead then return end
-    local target = GetTarget(1500)
-    local MinQ = self.Menu.Combo.QCloseRange:Value()
-    if target == nil then return end
-
-    if self.Menu.Combo.Q:Value() and Ready(_Q) then
-        if self.Menu.Combo.QReset:Value() then
-            if myHero.pos:DistanceTo(target.pos) <= myHero.range + 150 and 
-            myHero.attackData.state == STATE_WINDDOWN then
-                EnableOrb(false)
-            Control.CastSpell(HK_Q)
-            Control.Attack(target)
-            DelayAction(function() EnableOrb(true) end, 0.15)
-            end
-         elseif self.Menu.Combo.QClose:Value() then
-             if myHero.pos:DistanceTo(target.pos) <= MinQ then
-         Control.CastSpell(HK_Q)
-             end
-         elseif myHero.pos:DistanceTo(target.pos) <= myHero.range + 150 then
-             Control.CastSpell(HK_Q)
-         end
-    end
-
-    if self.Menu.Combo.W:Value() and Ready(_W) then 
-      if myHero.pos:DistanceTo(target.pos) <= 300 then
-        Control.CastSpell(HK_W)
+        if self:HasBuff(myHero, "GarenE") == true then EnableAttack(false)
+      else EnableAttack(true)
       end
-    end
 
-
-    if self.Menu.Combo.E:Value() and Ready(_E) and Ready(_Q) == false then
-        if self:HasBuff(myHero, "GarenQ") == false and self:HasBuff(myHero, "GarenE") == false  then 
-             if myHero.pos:DistanceTo(target.pos) <= 350 then 
-                Control.CastSpell(HK_E)
-            end
-         end
-    end
-
-
-    if self.Menu.Combo.R:Value() and Ready(_R) then 
-    if Rdmg(target) > target.health and myHero.pos:DistanceTo(target.pos) <= 400 then
-        EnableOrb(false)
-        Control.CastSpell(HK_R, target)
-        DelayAction(function() EnableOrb(true) end, 0.28)
-    end
-end
-
-end
-
-
-function SimpleGaren:Clear()
-  local Emobs = self.Menu.Clear.EMin:Value()
-
-  if self.Menu.Clear.Q:Value() and Ready(_Q) then
-    if MinionsAround(myHero.pos, 250) >= 1 and myHero.attackData.state == STATE_WINDDOWN then
-     Control.CastSpell(HK_Q)
-    end
-  end
-
-  if self.Menu.Clear.W:Value() and Ready(_W) then 
-    if MonstersAround(myHero.pos, 200) >= 1 then
-      Control.CastSpell(HK_W)
-    end
-  end
-
-  if self.Menu.Clear.E:Value() and Ready(_E) and not self:HasBuff(myHero, "GarenE") then if
-    MinionsAround(myHero.pos, 350) >= Emobs or MonstersAround(myHero.pos, 350) >= 1 then 
-    Control.CastSpell(HK_E)
-  end
-end
-
-end
-
-
-function SimpleGaren:Lasthit()
-  if self.Menu.Lasthit.Q:Value() and Ready(_Q) then
-    for i = 1, Game.MinionCount(320) do
-      local target = Game.Minion(i)
-      if  target.team == 200 and myHero.pos:DistanceTo(target.pos) <= myHero.range + 100 then
-        if Qdmg(target) > target.health then 
-          EnableOrb(false)
-          Control.CastSpell(HK_Q)
-          Control.Attack(target)
-          DelayAction(function() EnableOrb(true) end, 0.3)
+      if self.Menu.Misc.CancleE:Value() and Ready(_E) then
+        if self:HasBuff(myHero, "GarenE") then
+          if EnemiesAround(myHero.pos,ERange) < 1 and MinionsAround(myHero.pos, ERange) < 1 and MonstersAround(myHero.pos, ERange) == 0 then
+            Control.CastSpell(HK_E)
+          end
         end
       end
-    end
-  end
-end
 
-function SimpleGaren:Misc()
-local ERange = self.Menu.Misc.CancleERange:Value()
 
-    if self:HasBuff(myHero, "GarenE") == true then EnableAttack(false)
-    else EnableAttack(true)
     end
 
-    if self.Menu.Misc.CancleE:Value() and Ready(_E) then 
-         if self:HasBuff(myHero, "GarenE") then
-            if EnemiesAround(myHero.pos,ERange) < 1 and MinionsAround(myHero.pos, ERange) < 1 and MonstersAround(myHero.pos, ERange) == 0 then
-                Control.CastSpell(HK_E)
-            end
-        end
-    end
-
-
-end
-
-function SimpleGaren:Flee()
-    if self.Menu.Misc.Q:Value() and Ready(_Q) then
+    function SimpleGaren:Flee()
+      if self.Menu.Misc.Q:Value() and Ready(_Q) then
         Control.CastSpell(HK_Q)
+      end
     end
-end
 
-function SimpleGaren:Draw()
-end
+    function SimpleGaren:Draw()
+    end
 
-function OnLoad()
-SimpleGaren()
-end
+    function OnLoad()
+      SimpleGaren()
+    end
 
