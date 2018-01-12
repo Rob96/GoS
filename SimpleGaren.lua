@@ -203,9 +203,21 @@ function PercentHP(target)
 end
 
 
-local function Rdmg(target)
-  local Rdamage = getdmg("R",target,myHero) or 0
+function Rdmg(target)
+  local Rdamage = 0
+  local level = myHero:GetSpellData(_R).level
+  for i = 0, target.buffCount do
+    local buff = target:GetBuff(i)
+    if buff.name == "garenpassiveenemytarget" then
+      Rdamage = ({175, 350, 525})[level] + ({28.57, 33.33, 40})[level] / 100 * (target.maxHealth - target.health)
+    else
+      -- CalcMagicalDamage(myHero, target, {175, 350, 525})[level] + ({28.57, 33.33, 40})[level] / 100 * (target.maxHealth - target.health))
+      Rdamage =CalcMagicalDamage(myHero, target, (({175, 350, 525})[level] + ({28.57, 33.33, 40})[level] / 100 * (target.maxHealth - target.health) ))
+      --Rdamage = getdmg("R",target,myHero) or 0
+    end
+  end
   return Rdamage
+
 end
 
 local function Qdmg(target)
@@ -221,7 +233,7 @@ function SimpleGaren:LoadMenu()
   self.Menu.Combo:MenuElement({id = "QReset", name = "Only Q as auto reset", value = false})
   self.Menu.Combo:MenuElement({type = SPACE, name = "Note: Disables other Q logic"})
   self.Menu.Combo:MenuElement({id = "QClose", name = "Use Q to gapclose?", value = true})
-  self.Menu.Combo:MenuElement({id = "QCloseRange", name = "Min range to gapclose", value = 300, min = 0, max = 1500, step = 25})
+  self.Menu.Combo:MenuElement({id = "QCloseRange", name = "Max range to gapclose", value = 300, min = 0, max = 1500, step = 25})
   self.Menu.Combo:MenuElement({id = "W", name = "Use W", value = false})
   self.Menu.Combo:MenuElement({id = "E", name = "Use E", value = true})
   self.Menu.Combo:MenuElement({id = "R", name = "R on kill", value = true})
@@ -243,6 +255,9 @@ function SimpleGaren:LoadMenu()
   self.Menu.Misc:MenuElement({id = "CancleEMinion", name = "Min lane-minions cancle E", value = 1, min = 0, max = 6, step = 1})
   --self.Menu.Misc:MenuElement({id = "W", name = "Auto W on big hits and cc?", value = false})
   self.Menu.Misc:MenuElement({type = SPACE})
+  self.Menu.Misc:MenuElement({id = "RKS", name = "Auto KS R", value = true})
+  self.Menu.Misc:MenuElement({id = "Rdmg", name = "Draw R damage on champion", value = true})
+  self.Menu.Misc:MenuElement({type = SPACE})
   self.Menu.Misc:MenuElement({id = "lvEnabled", name = "Enable AutoLeveler", value = true})
   self.Menu.Misc:MenuElement({id = "Block", name = "Block on Level 1", value = true})
   self.Menu.Misc:MenuElement({id = "Order", name = "Skill Priority", drop = {"[Q] - [W] - [E] > Max [Q]","[Q] - [E] - [W] > Max [Q]","[W] - [Q] - [E] > Max [W]","[W] - [E] - [Q] > Max [W]","[E] - [Q] - [W] > Max [E]","[E] - [W] - [Q] > Max [E]"}})
@@ -255,7 +270,28 @@ function SimpleGaren:LoadMenu()
   self.Menu.Activator.Potions:MenuElement({id = "HP", name = "Health % to Potion", value = 60, min = 0, max = 100})
   self.Menu.Activator:MenuElement({type = SPACE, id = "Ab", name = "Combo Item Activator"})
   self.Menu.Activator:MenuElement({type = MENU, id = "Items", name = "Items"})
+  self.Menu.Activator.Items:MenuElement({id = "YG", name = "Youmuu's Ghostblade", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "TIA", name = "Tiamat", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "HYD", name = "Ravenous Hydra", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "TIT", name = "Titanic Hydra", value = true})
   self.Menu.Activator.Items:MenuElement({id = "QSS", name = "QSS / Scimitar", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "Bilge", name = "Bilgewater Cutlass (all)", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "Edge", name = "Edge of the Night", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "Frost", name = "Frost Queen's Claim", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "Proto", name = "Hextec Revolver (all)", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "Ohm", name = "Ohmwrecker", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "Glory", name = "Righteous Glory", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "Face", name = "Face of the Mountain", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "Garg", name = "Gargoyle Stoneplate", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "Locket", name = "Locket of the Iron Solari", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "MC", name = "Mikael's Crucible", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "QSS", name = "Quicksilver Sash", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "RO", name = "Randuin's Omen", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "SE", name = "Seraph's Embrace", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "Ban", name = "Banner of Command", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "Red", name = "Redemption", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "TA", name = "Talisman of Ascension", value = true})
+  self.Menu.Activator.Items:MenuElement({id = "ZZ", name = "Zz'Rot Portal", value = true})
   self.Menu.Activator.Items:MenuElement({type = MENU, id = "QSSS", name = "QSS Settings"})
   self.Menu.Activator.Items.QSSS:MenuElement({id = "Blind", name = "Blind", value = true})
   self.Menu.Activator.Items.QSSS:MenuElement({id = "Charm", name = "Charm", value = true})
@@ -466,7 +502,6 @@ function SimpleGaren:Summoners()
           end
         end
 
-
         function SimpleGaren:Activator()
           local target = GetTarget(2500)
           local items = {}
@@ -485,9 +520,101 @@ function SimpleGaren:Summoners()
               end
             end
           end
+
+          local Banner = items[3060]
+          if Banner and myHero:GetSpellData(Banner).currentCd == 0 and self.Menu.Activator.Items.Ban:Value() then
+            for i = 1, Game.MinionCount() do
+              local minion = Game.Minion(i)
+              if minion and minion.team == myHero.team and myHero.pos:DistanceTo(minion.pos) < 1200 then
+                Control.CastSpell(HKITEM[Banner], minion)
+              end
+            end
+          end
+          local Face = items[3401]
+          if Face and target and myHero:GetSpellData(Face).currentCd == 0 and self.Menu.Activator.Items.Face:Value() and PercentHP(myHero) < 30 then
+            Control.CastSpell(HKITEM[Face])
+          end
+          local Garg = items[3193]
+          if Garg and target and myHero:GetSpellData(Garg).currentCd == 0 and self.Menu.Activator.Items.Garg:Value() and PercentHP(myHero) < 30 then
+            Control.CastSpell(HKITEM[Garg])
+          end
+          local Red = items[3107]
+          if Red and target and myHero:GetSpellData(Red).currentCd == 0 and self.Menu.Activator.Items.Red:Value() and PercentHP(myHero) < 30 then
+            Control.CastSpell(HKITEM[Red], myHero.pos)
+          end
+          local SE = items[3048]
+          if SE and target and myHero:GetSpellData(SE).currentCd == 0 and self.Menu.Activator.Items.SE:Value() and PercentHP(myHero) < 30 and MP(myHero) > 45 then
+            Control.CastSpell(HKITEM[SE])
+          end
+          local Locket = items[3190]
+          if Locket and target and myHero:GetSpellData(Locket).currentCd == 0 and self.Menu.Activator.Items.Locket:Value() and PercentHP(myHero) < 30 then
+            Control.CastSpell(HKITEM[Locket])
+          end
+          local ZZ = items[3144] or items[3153]
+          if ZZ and myHero:GetSpellData(ZZ).currentCd == 0 and self.Menu.Activator.Items.ZZ:Value() then
+            for i = 1, Game.TurretCount() do
+              local turret = Game.Turret(i)
+              if turret and turret.isAlly and PercentHP(turret) < 100 and myHero.pos:DistanceTo(turret.pos) < 400 then
+                Control.CastSpell(HKITEM[ZZ], turret.pos)
+              end
+            end
+          end
+
           --COMBO MODE ACTIVATOR
           if target == nil then return end
           if GetMode() == "Combo" then
+
+            local Bilge = items[3144] or items[3153]
+            if Bilge and myHero:GetSpellData(Bilge).currentCd == 0 and self.Menu.Activator.Items.Bilge:Value() and myHero.pos:DistanceTo(target.pos) < 550 then
+              Control.CastSpell(HKITEM[Bilge], target.pos)
+            end
+            local Edge = items[3814]
+            if Edge and myHero:GetSpellData(Edge).currentCd == 0 and self.Menu.Activator.Items.Edge:Value() and myHero.pos:DistanceTo(target.pos) < 1200 then
+              Control.CastSpell(HKITEM[Edge])
+            end
+            local Frost = items[3092]
+            if Frost and myHero:GetSpellData(Frost).currentCd == 0 and self.Menu.Activator.Items.Frost:Value() and myHero.pos:DistanceTo(target.pos) < 1575 then
+              Control.CastSpell(HKITEM[Frost])
+            end
+            local Randuin = items[3143]
+            if Randuin and myHero:GetSpellData(Randuin).currentCd == 0 and self.Menu.Activator.Items.RO:Value() and myHero.pos:DistanceTo(target.pos) < 500 then
+              Control.CastSpell(HKITEM[Randuin])
+            end
+            local Hex = items[3152] or items[3146] or items[3030]
+            if Hex and myHero:GetSpellData(Hex).currentCd == 0 and self.Menu.Activator.Items.Proto:Value() and myHero.pos:DistanceTo(target.pos) < 550 then
+              Control.CastSpell(HKITEM[Hex], target.pos)
+            end
+            local Pistol = items[3146]
+            if Pistol and myHero:GetSpellData(Pistol).currentCd == 0 and self.Menu.Activator.Items.Proto:Value() and myHero.pos:DistanceTo(target.pos) < 700 then
+              Control.CastSpell(HKITEM[Pistol], target.pos)
+            end
+            local Ohm = items[3144] or items[3153]
+            if Ohm and myHero:GetSpellData(Ohm).currentCd == 0 and self.Menu.Activator.Items.Ohm:Value() and myHero.pos:DistanceTo(target.pos) < 800 then
+              for i = 1, Game.TurretCount() do
+                local turret = Game.Turret(i)
+                if turret and turret.isEnemy and turret.isTargetableToTeam and myHero.pos:DistanceTo(turret.pos) < 775 then
+                  Control.CastSpell(HKITEM[Ohm])
+                end
+              end
+            end
+            local Glory = items[3800]
+            if Glory and myHero:GetSpellData(Glory).currentCd == 0 and self.Menu.Activator.Items.Glory:Value() and myHero.pos:DistanceTo(target.pos) < 1575 then
+              Control.CastSpell(HKITEM[Glory])
+            end
+            local Tiamat = items[3077] or items[3748] or items[3074]
+            if Tiamat and myHero:GetSpellData(Tiamat).currentCd == 0  and self.Menu.Activator.Items.TIA:Value()  and myHero.pos:DistanceTo(target.pos) < 400  and myHero.attackData.state == 3 then
+              Control.CastSpell(HKITEM[Tiamat], target.pos)
+            end
+            local YG = items[3142]
+            if YG and myHero:GetSpellData(YG).currentCd == 0 and self.Menu.Activator.Items.YG:Value() and myHero.pos:DistanceTo(target.pos) < 1575 then
+              Control.CastSpell(HKITEM[YG])
+            end
+            local TA = items[3069]
+            if TA and myHero:GetSpellData(TA).currentCd == 0 and self.Menu.Activator.Items.TA:Value() and myHero.pos:DistanceTo(target.pos) < 1575 then
+              Control.CastSpell(HKITEM[TA])
+            end
+            ---------------------------------------------------------------------------------------------------------------------------------------------------
+
             local QSS = items[3140] or items[3139] --QSS - Scimitar
             if QSS then
               if self.Menu.Activator.Items.QSS:Value() and myHero:GetSpellData(QSS).currentCd == 0 then
@@ -535,7 +662,6 @@ function SimpleGaren:Summoners()
             self:Flee()
           end
 
-
         end
 
         function SimpleGaren:Combo()
@@ -547,7 +673,7 @@ function SimpleGaren:Summoners()
           if self.Menu.Combo.Q:Value() and Ready(_Q) then
             if self.Menu.Combo.QReset:Value() then
               if myHero.pos:DistanceTo(target.pos) <= myHero.range + 150 and
-              myHero.attackData.state == STATE_WINDDOWN then
+              myHero.attackData.state == 3 then
                 EnableOrb(false)
                 Control.CastSpell(HK_Q)
                 Control.Attack(target)
@@ -585,15 +711,13 @@ function SimpleGaren:Summoners()
               DelayAction(function() EnableOrb(true) end, 0.28)
             end
           end
-
         end
-
 
         function SimpleGaren:Clear()
           local Emobs = self.Menu.Clear.EMin:Value()
 
           if self.Menu.Clear.Q:Value() and Ready(_Q) then
-            if MinionsAround(myHero.pos, 250) >= 1 and myHero.attackData.state == STATE_WINDDOWN then
+            if MinionsAround(myHero.pos, 250) >= 1 and myHero.attackData.state == 3 then
               Control.CastSpell(HK_Q)
             end
           end
@@ -609,9 +733,7 @@ function SimpleGaren:Summoners()
             Control.CastSpell(HK_E)
           end
         end
-
       end
-
 
       function SimpleGaren:Lasthit()
         if self.Menu.Lasthit.Q:Value() and Ready(_Q) then
@@ -631,6 +753,7 @@ function SimpleGaren:Summoners()
 
       function SimpleGaren:Misc()
         local ERange = self.Menu.Misc.CancleERange:Value()
+        local target = EAround(myHero.pos, 400)
 
         if self:HasBuff(myHero, "GarenE") == true then EnableAttack(false)
       else EnableAttack(true)
@@ -645,6 +768,14 @@ function SimpleGaren:Summoners()
       end
 
 
+      if self.Menu.Misc.RKS:Value() and Ready(_R) then
+        if target == nil then return end
+        if Rdmg(target) > target.health and myHero.pos:DistanceTo(target.pos) <= 400 then
+          EnableOrb(false)
+          Control.CastSpell(HK_R, target)
+          DelayAction(function() EnableOrb(true) end, 0.28)
+      end
+    end
     end
 
     function SimpleGaren:Flee()
@@ -654,6 +785,25 @@ function SimpleGaren:Summoners()
     end
 
     function SimpleGaren:Draw()
+      if self.Menu.Misc.Rdmg:Value() and Ready(_R) then
+        for i = 1, Game.HeroCount() do
+          local target = Game.Hero(i)
+          if target and target.isEnemy and not target.dead and target.visible then
+            local barPos = target.hpBar
+            local textPos = myHero.pos:To2D()
+            local health = target.health
+            local maxHealth = target.maxHealth
+            local Rdmg = Rdmg(target)
+            if Rdmg < target.health then
+              Draw.Rect(barPos.x + (( (health - Rdmg) / maxHealth) * 100) + 25, barPos.y - 13, (Rdmg / maxHealth )*100, 10, Draw.Color(255, 200, 200, 25))
+            else
+              Draw.Rect(barPos.x + 20 , barPos.y - 13 ,((target.health/target.maxHealth)*100),10, Draw.Color(150, 255, 255, 000))
+              Draw.Text("Execute", 20, barPos.x + 20, barPos.y + 5, Draw.Color(255, 255, 000, 000))
+            end
+          end
+        end
+      end
+
     end
 
     function OnLoad()
