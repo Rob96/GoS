@@ -114,6 +114,7 @@ function SimpleGaren:HasBuff(unit, buffname)
   return false
 end
 
+
 function SimpleGaren:GetBuffs(unit)
   self.T = {}
   for i = 0, unit.buffCount do
@@ -203,21 +204,15 @@ function PercentHP(target)
 end
 
 
-function Rdmg(target)
+ function SimpleGaren:Rdmg(target)
   local Rdamage = 0
   local level = myHero:GetSpellData(_R).level
-  for i = 0, target.buffCount do
-    local buff = target:GetBuff(i)
-    if buff.name == "garenpassiveenemytarget" then
+    if self:HasBuff(target,"garenpassiveenemytarget") then
       Rdamage = ({175, 350, 525})[level] + ({28.57, 33.33, 40})[level] / 100 * (target.maxHealth - target.health)
     else
-      -- CalcMagicalDamage(myHero, target, {175, 350, 525})[level] + ({28.57, 33.33, 40})[level] / 100 * (target.maxHealth - target.health))
-      Rdamage =CalcMagicalDamage(myHero, target, (({175, 350, 525})[level] + ({28.57, 33.33, 40})[level] / 100 * (target.maxHealth - target.health) ))
-      --Rdamage = getdmg("R",target,myHero) or 0
+      Rdamage = CalcMagicalDamage(myHero, target, (({175, 350, 525})[level] + ({28.57, 33.33, 40})[level] / 100 * (target.maxHealth - target.health)))
     end
-  end
   return Rdamage
-
 end
 
 local function Qdmg(target)
@@ -264,6 +259,7 @@ function SimpleGaren:LoadMenu()
 
   --ITEM ACTIVATOR
   self.Menu:MenuElement({type = MENU, id ="Activator", name = "Activator"})
+  self.Menu.Activator:MenuElement({id = "OnOff", name = "Activator on/off", value = true})
   self.Menu.Activator:MenuElement({type = SPACE, id = "A", name = "24/7 Item Activator"})
   self.Menu.Activator:MenuElement({type = MENU, id = "Potions", name = "Potions"})
   self.Menu.Activator.Potions:MenuElement({id = "Pot", name = "Use Pots?", value = true})
@@ -392,6 +388,7 @@ function SimpleGaren:AutoLevel()
 end
 
 function SimpleGaren:Summoners()
+  if self.Menu.Activator.OnOff:Value() == false then return end
   local target = GetTarget(1200)
   if target == nil then return end
   if GetMode() == "Combo" then
@@ -503,6 +500,7 @@ function SimpleGaren:Summoners()
         end
 
         function SimpleGaren:Activator()
+          if self.Menu.Activator.OnOff:Value() == false then return end
           local target = GetTarget(2500)
           local items = {}
           for slot = ITEM_1,ITEM_6 do
@@ -648,6 +646,8 @@ function SimpleGaren:Summoners()
           self:AutoLevel()
           self:Activator()
           self:Summoners()
+          
+
 
           if Mode == "Combo" then
             self:Combo()
@@ -705,7 +705,7 @@ function SimpleGaren:Summoners()
 
 
           if self.Menu.Combo.R:Value() and Ready(_R) then
-            if Rdmg(target) > target.health and myHero.pos:DistanceTo(target.pos) <= 400 then
+            if self:Rdmg(target) > target.health and myHero.pos:DistanceTo(target.pos) <= 400 then
               EnableOrb(false)
               Control.CastSpell(HK_R, target)
               DelayAction(function() EnableOrb(true) end, 0.28)
@@ -770,7 +770,7 @@ function SimpleGaren:Summoners()
 
       if self.Menu.Misc.RKS:Value() and Ready(_R) then
         if target == nil then return end
-        if Rdmg(target) > target.health and myHero.pos:DistanceTo(target.pos) <= 400 then
+        if self:Rdmg(target) > target.health and myHero.pos:DistanceTo(target.pos) <= 400 then
           EnableOrb(false)
           Control.CastSpell(HK_R, target)
           DelayAction(function() EnableOrb(true) end, 0.28)
@@ -793,7 +793,7 @@ function SimpleGaren:Summoners()
             local textPos = myHero.pos:To2D()
             local health = target.health
             local maxHealth = target.maxHealth
-            local Rdmg = Rdmg(target)
+            local Rdmg = self:Rdmg(target)
             if Rdmg < target.health then
               Draw.Rect(barPos.x + (( (health - Rdmg) / maxHealth) * 100) + 25, barPos.y - 13, (Rdmg / maxHealth )*100, 10, Draw.Color(255, 200, 200, 25))
             else
@@ -809,4 +809,3 @@ function SimpleGaren:Summoners()
     function OnLoad()
       SimpleGaren()
     end
-
