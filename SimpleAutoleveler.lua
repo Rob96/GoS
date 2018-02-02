@@ -6,15 +6,12 @@ function SimpleAutoLeveler:__init()
   Callback.Add("Tick", function() self:Tick() end)
 end
 
-
-
 function SimpleAutoLeveler:LoadMenu()
   self.Menu = MenuElement({type = MENU, id = "SimpleAutoLeveler", name = "SimpleAutoLeveler"})
   self.Menu:MenuElement({id = "lvEnabled", name = "Enable AutoLeveler", value = true})
   self.Menu:MenuElement({id = "Block", name = "Block on Level 1", value = true})
   self.Menu:MenuElement({id = "Order", name = "Skill Priority", drop = {"[Q] - [W] - [E] > Max [Q]","[Q] - [E] - [W] > Max [Q]","[W] - [Q] - [E] > Max [W]","[W] - [E] - [Q] > Max [W]","[E] - [Q] - [W] > Max [E]","[E] - [W] - [Q] > Max [E]"}})
 end
-
 
 function SimpleAutoLeveler:AutoLevel()
   if self.Menu.lvEnabled:Value() == false then return end
@@ -49,13 +46,11 @@ function SimpleAutoLeveler:AutoLevel()
   end
 end
 
-        function SimpleAutoLeveler:Tick()
-          if Game.IsChatOpen() == true then return end
-          self:AutoLevel()
-        end
+function SimpleAutoLeveler:Tick()
+  if Game.IsChatOpen() == true then return end
+  self:AutoLevel()
+end
 
-
-
-    function OnLoad()
-      SimpleAutoLeveler()
-    end
+function OnLoad()
+  SimpleAutoLeveler()
+end
