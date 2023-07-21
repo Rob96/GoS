@@ -1,5 +1,5 @@
 class "Nasus"
-require("DamageLib")
+--require("DamageLib")
 
 local function Ready(spell)
     return Game.CanUseSpell(spell) == 0
